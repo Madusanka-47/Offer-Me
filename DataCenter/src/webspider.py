@@ -1,5 +1,5 @@
 import scrapy
-
+import logging
 
 class WebSpider(scrapy.Spider):
     name = 'quotes'
@@ -8,6 +8,7 @@ class WebSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
+        logging.warning(response)
         for quote in response.css('div.quote'):
             yield {
                 'text': quote.css('span.text::text').get(),
