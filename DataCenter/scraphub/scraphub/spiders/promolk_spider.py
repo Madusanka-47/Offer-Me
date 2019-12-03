@@ -1,4 +1,5 @@
 import scrapy
+from ..items import ScraphubItem
 
 class PromolkSpider(scrapy.Spider):
     name = 'Promo.lk'
@@ -8,7 +9,7 @@ class PromolkSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
+        items = ScraphubItem()
         for promo_ in response.css('div.mBtm-10'):
-            yield {
-                'title': promo_.css('div.title::text').get()
-            }
+            items['title'] = promo_.css('div.title::text').get()
+            yield items

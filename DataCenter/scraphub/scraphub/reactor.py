@@ -1,6 +1,6 @@
 from scrapy.crawler import CrawlerProcess
 import importlib
-from promolk_spider import PromolkSpider
+from spiders.promolk_spider import PromolkSpider
 
 process = CrawlerProcess(settings={
     'FEED_FORMAT': 'json',
