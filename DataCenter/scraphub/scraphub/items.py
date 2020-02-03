@@ -10,5 +10,9 @@ import scrapy
 
 class ScraphubItem(scrapy.Item):
     # define the fields for your item here like:
-    title = scrapy.Field()
+    description = scrapy.Field()
+    discount = scrapy.Field()
+    imgurl = scrapy.Field()
+    acprice = scrapy.Field()
+    href = scrapy.Field()
     pass

@@ -17,10 +17,12 @@ class MongoDBPipeline(object):
     def __init__(self):
         self.connection = pymongo.MongoClient(
             # settings['MONGODB_SERVER']
-            'mongodb+srv://dumalk:dumalk@cluster0-yx3nh.mongodb.net/shuttle_core?retryWrites=true&w=majority'
+            """mongodb://dumalk:dumalk@cluster0-shard-00-00-yx3nh.mongodb.net:27017,
+            cluster0-shard-00-01-yx3nh.mongodb.net:27017,
+            cluster0-shard-00-02-yx3nh.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"""
         )
-        db = self.connection['shuttle_core']
-        self.collection = db['questions']
+        db = self.connection['scraphub_datacenter']
+        self.collection = db['basic']
         # db = connection[settings['MONGODB_DB']]
         # self.collection = db[settings['MONGODB_COLLECTION']]
 
