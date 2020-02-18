@@ -1,2 +1,12 @@
 pip install scrapy
 pip install  pymongo
+pip install beautifulsoup4
+pip install cssutils
+pip install google-cloud-storage
+pip install firebase
+#pip install python_jwt
+#pip install gcloud
+#pip install sseclient
+#pip install Crypto
+pip install firebase_admin
+pip install urllib3
