@@ -19,8 +19,8 @@ class PubReactor:
         configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
         runner = CrawlerRunner(settings)
 
-        runner.crawl(MydeallkSpider) #here
-        # runner.crawl(PromolkSpider)
+        # runner.crawl(MydeallkSpider) #here
+        runner.crawl(PromolkSpider)
         d = runner.join()
         d.addBoth(lambda _: reactor.stop())
         reactor.run()
