@@ -18,7 +18,7 @@ class MydeallkSpider(scrapy.Spider):
     name = 'Mydeallk'
 
     start_urls = [
-        'https://www.mydeal.lk/deals/?page=1'#%d' % page for page in range(1,5) #daily deals with 5 page pagination proper solution required
+        'https://www.mydeal.lk/deals/?page=%d' % page for page in range(1,5)
     ]
     service_config = GlobalVariable.config()['service_configurations']
     
@@ -32,7 +32,7 @@ class MydeallkSpider(scrapy.Spider):
             url = None
             image_name = None
             ccssrc_ = deal_.css('div.deal-image').get()
-            if ccssrc_ is not None: # condition shoudl change in a proper manner
+            if ccssrc_ is not None:
                 soup = BeautifulSoup(ccssrc_)
                 div_style = soup.find('div')['style']
                 sheet = cssutils.css.CSSStyleSheet()

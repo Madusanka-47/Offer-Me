@@ -18,7 +18,7 @@ class BucketUploader:
     def upload_blob(source_file_name, destination_blob_name):
         service_config = GlobalVariable.config()['service_configurations']
         
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = service_config['bucket_AUTH']
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd() + service_config['bucket_AUTH']
         """Uploads a file to the bucket."""
         # bucket_name = "your-bucket-name"
         # source_file_name = "local/path/to/file"

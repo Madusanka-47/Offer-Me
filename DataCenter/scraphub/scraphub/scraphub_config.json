@@ -1,14 +1,20 @@
 {
     "service_configurations": {
-        "bucket_AUTH": "D:/Projects/trunk/DataCenter/scraphub/scraphub/service_auth.json",
+        "bucket_AUTH": "/scraphub/scraphub/service_auth.json",
         "bucket_baseURL": "https://storage.cloud.google.com/scraphub-store/Uploads/",
         "bucket_PATH": "Uploads/",
         "file_store": "scraphub-store",
         "temp_dir": "D:/",
+        "scheduletime": "00:10",
         "Mongo_onfig": {
             "con_str": "mongodb://dumalk:dumalk@cluster0-shard-00-00-yx3nh.mongodb.net:27017,cluster0-shard-00-01-yx3nh.mongodb.net:27017,cluster0-shard-00-02-yx3nh.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority",
             "db_name": "OfferMe-scraphub",
             "collection": "offers_"
+        },
+        "mail_smtpconfig":{
+            "domain": "scraphub.shell@gmail.com",
+            "admin": "madusanka.wettewa@gmail.com",
+            "service_key": "creed124"
         }
     }
 }
