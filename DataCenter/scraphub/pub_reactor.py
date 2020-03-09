@@ -64,14 +64,14 @@ def scheduler__():
             sender_email, receiver_email, message.as_string()
         )
 
+scheduler__()
+# schedule.every().day.at(service_config['scheduletime']).do(scheduler__)
 
-schedule.every().day.at(service_config['scheduletime']).do(scheduler__)
+# while True:
 
-while True:
-
-    # Checks whether a scheduled task
-    # is pending to run or not
-    schedule.run_pending()
-    time.sleep(1)
+#     # Checks whether a scheduled task
+#     # is pending to run or not
+#     schedule.run_pending()
+#     time.sleep(1)
     
 #Configurations needs to be handel properly
