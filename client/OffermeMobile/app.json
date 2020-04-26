@@ -1,9 +1,7 @@
 {
   "expo": {
-    "name": "Offer Me",
+    "name": "OfferMe",
     "slug": "OffermeMobile",
-    "privacy": "public",
-    "sdkVersion": "35.0.0",
     "platforms": [
       "ios",
       "android",
