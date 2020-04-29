@@ -6,7 +6,9 @@ import {
     Image
 } from "react-native";
 
-import { Card, CardItem, Thumbnail, Body, Left, Right, Button, Icon } from 'native-base'
+import { Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base'
+
+import Icon from 'react-native-vector-icons/EvilIcons';
 
 
 export default class CardComponent extends React.Component {
@@ -18,7 +20,7 @@ export default class CardComponent extends React.Component {
             "1": require('../assets/feed_images/1.jpg'),
             "2": require('../assets/feed_images/2.jpg'),
             "3": require('../assets/feed_images/3.jpg'),
-            
+
         }
 
         return (
@@ -64,11 +66,20 @@ export default class CardComponent extends React.Component {
                 <CardItem>
                     <Button transparent
                         style={styles.container}
+                    // onPress={() => }
+                    >
+                        <Icon name="heart" size={30} color={'purple'}/>
+                        <Text>
+                            Rate up
+                        </Text>
+                    </Button>
+                    <Button transparent
+                        style={styles.container}
                         onPress={() => this.props.navigate.navigate('Comments')}>
+                        <Icon name="comment" size={30} />
                         <Text>
                             Comment
                         </Text>
-                        {/* <Icon name="comment-alt" style={{ color: 'black' }} /> */}
                     </Button>
                 </CardItem>
             </Card>

@@ -15,9 +15,64 @@ import {
 } from 'native-base';
 
 import PostShowCase from './PostShowCase'
-import { StyleSheet, Button } from 'react-native'
+import { StyleSheet, Button, Image } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import { bool } from 'prop-types';
+
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class CreateUserPost extends React.Component {
+    state = {
+        image: null,
+        show: false
+    };
+
+    selectPicture = async () => {
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!result.cancelled) {
+                this.setState({ show: true });
+                this.setState({ image: result.uri });
+            }
+
+            console.log(result);
+        } catch (E) {
+            console.log(E);
+        }
+    };
+
+    getNewPhoto = async () => {
+        await Permissions.askAsync(Permissions.CAMERA);
+        try {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!result.cancelled) {
+                this.setState({ show: true });
+                this.setState({ image: result.uri });
+
+            }
+
+            console.log(result);
+        } catch (E) {
+            console.log(E);
+        }
+    };
+
+    cancel = () => {
+        this.setState({ show: false });
+    }
+
     render() {
         return (
             <Container style={styles.container}>
@@ -31,10 +86,27 @@ export default class CreateUserPost extends React.Component {
                         </Left>
                     </CardItem>
                     <CardItem>
-                        <Button
-                            // onPress={() => this.props.navigation.navigate('MyModal')}
-                            title="Close"
-                        />
+                        {this.state.show ? (
+                            <Image style={styles.image} source={{ uri: this.state.image }} />
+                        ) : null}
+
+                        {this.state.show ? (
+                            <MaterialIcon
+                                name={'close'}
+                                size={30}
+                                onPress={this.cancel}
+                            />
+                        ) : null}
+                    </CardItem>
+                    <CardItem>
+                        <MaterialIcon
+                            name={'image'}
+                            size={35}
+                            onPress={this.selectPicture} />
+                        <MaterialIcon
+                            name={'camera'}
+                            size={35}
+                            onPress={this.getNewPhoto} />
                     </CardItem>
                 </Card>
                 <Container>
@@ -60,6 +132,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 15
 
-    }
+    },
+    image: { width: 300, height: 200, backgroundColor: 'gray' },
 
 });
