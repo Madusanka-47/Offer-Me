@@ -8,50 +8,53 @@ import {
 } from 'react-native';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
+import Pusher from 'pusher-js/react-native';
+import UserInput from './UserInput'
+import { useNavigation } from '@react-navigation/native';
+
+// const API_URL = 'http://localhost:9000/api/';
 
 export default class List extends Component {
 
-  static propTypes = {
-    user: PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-    }).isRequired,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      comments: [],
+      refreshing: true,
+      tasks: [],
+      task: ''
+    };
+    // this.updateText = this.updateText.bind(this);
+    // this.postTask = this.postTask.bind(this);
+    // this.deleteTask = this.deleteTask.bind(this);
+    this.addTask = this.addTask.bind(this);
+    this.removeTask = this.removeTask.bind(this);    
+  }
 
-  state = {
-    comments: [{
-        user: {
-            name: 'Dulanjan Madusanka',
-            avatar: 'https://img.favpng.com/25/1/17/avatar-user-computer-icons-software-developer-png-favpng-7SbFpNeqKqhhTrrrnHFUqk6U4.jpg'
-        },
-        content : 'This offer is still available, \ni have checked out it by my self and its wroth of price.',
-        created: ''
-    }],
-    refreshing: true,
-  };
 
   // Fetch comments when component is about to mount
-//   componentWillMount = () => this.fetchComments();
+  //   componentWillMount = () => this.fetchComments();
 
   // Re-fetch comments when user pulls the list down
-//   onRefresh = () => this.fetchComments();
+  //   onRefresh = () => this.fetchComments();
 
   // Call API to fetch comments
-//   fetchComments = async () => {
-//     this.setState({ refreshing: true });
-//     try {
-//       // Make API call
-//       const response = await get('comments');
-//       // Convert response to JSON
-//       const json = await response.json();
-//       this.setState({
-//         refreshing: false,
-//         comments: json.comments
-//       });
-//     }
-//     catch (error) {
-//       alert(error);
-//     }
-//   };
+  //   fetchComments = async () => {
+  //     this.setState({ refreshing: true });
+  //     try {
+  //       // Make API call
+  //       const response = await get('comments');
+  //       // Convert response to JSON
+  //       const json = await response.json();
+  //       this.setState({
+  //         refreshing: false,
+  //         comments: json.comments
+  //       });
+  //     }
+  //     catch (error) {
+  //       alert(error);
+  //     }
+  //   };
 
   // Call API to submit a new comment
   submitComment = async (comment) => {
@@ -75,31 +78,62 @@ export default class List extends Component {
     // }
   };
 
+  addTask(newTask) {
+    console.log(newTask)
+    this.setState(prevState => ({
+      comments: prevState.comments.concat(newTask),
+      task: ''
+    }));
+  }
+
+  removeTask(id) {
+    this.setState(prevState => ({
+      tasks: prevState.tasks.filter(el => el.id !== id)
+    }));
+  }
+
+  componentDidMount() {
+    this.pusher = new Pusher('dc0082564549a4440b3c', {
+      cluster: 'ap2',
+      encrypted: true,
+    });
+    this.channel = this.pusher.subscribe('post_comment');
+
+    this.channel.bind('inserted', this.addTask);
+    this.channel.bind('deleted', this.removeTask);
+  }
+
   render() {
+    // let abc = this.state.tasks.map(itm => itm)
+    // this.state.comments.push(this.state.task)
+    // console.log(this.state.comments)
     // const { navigate } = this.props.navigation;
     // Pull comments out of state
+    // const { params } = this.props.navigation.state;
+    // const itemId = params ? params.itemId : null;
+    // const { params } = this.props.navigation.state;
     const { comments } = this.state;
     return (
       <View style={styles.container}>
-          {/* <Button
+        {/* <Button
         onPress={() => this.props.navigation.navigate('MyModal')}
         title="Close"
       /> */}
         {/* Scrollable list */}
         <ScrollView
-          ref={(scrollView) => { this._scrollView = scrollView; }}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-            //   onRefresh={this.onRefresh}
-            />
-          }
+        // ref={(scrollView) => { this._scrollView = scrollView; }}
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={this.state.refreshing}
+        //   //   onRefresh={this.onRefresh}
+        //   />
+        // }
         >
           {/* Render each comment with Comment component */}
           {comments.map((comment, index) => <Comment comment={comment} key={index} />)}
         </ScrollView>
         {/* Comment input box */}
-        {/* <Input onSubmit={this.submitComment} /> */}
+        <UserInput onSubmit={this.submitComment} />
       </View>
     );
   }

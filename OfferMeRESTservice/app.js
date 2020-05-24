@@ -1,7 +1,7 @@
 const express = require('express'),
   bodyParser = require('body-parser');
 const path = require('path');
-const api = require('./api/routes/api');
+const api = require('./api/api');
 const mongoose = require('mongoose');
 const changeSteamWatcher = require('./api/services/ChangeSteamWatcher');
 
@@ -18,7 +18,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-api(app)
+app.use('/api', api)
+// api(app)
 
 module.exports = app;
 var connection = new Promise((resolve, rejected) => {

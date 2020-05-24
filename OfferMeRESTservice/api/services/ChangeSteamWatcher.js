@@ -1,5 +1,10 @@
 const Pusher = require('pusher');
-//Watch the replica set and push the changes to the Pusher envirenoment.
+/**
+ * This will watch the repica set and push the changes to
+ * Pusher Enviroment
+ * @author Dulanjan
+ */
+
 var pusher = new Pusher({
     appId: '960215',
     key: 'dc0082564549a4440b3c',
@@ -15,8 +20,6 @@ var watcher = (db) => {
     const changeStream = taskCollection.watch();
 
     changeStream.on('change', (change) => {
-        console.log(change); // for debuging the oupu valuve
-
         if (change.operationType === 'insert') {
             const comment = change.fullDocument;
             pusher.trigger(
@@ -25,12 +28,10 @@ var watcher = (db) => {
                 {
                     id: comment._id,
                     postid: comment.postid,
-                    body: comment.body,
-                    parent_node: comment.parent_node,
-                    order: comment.order,
-                    author: comment.author,
-                    authorid: comment.authorid,
-                    created_at: comment.created_at,
+                    user: comment.user,
+                    content: comment.content,
+                    display_order: comment.display_order,
+                    created_at: comment.created_at
                 }
             );
         } else if (change.operationType === 'delete') {

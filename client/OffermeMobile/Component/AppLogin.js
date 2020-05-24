@@ -1,68 +1,69 @@
 import React from "react"
-import { StyleSheet, Text, View, Image, Button } from "react-native"
+import { StyleSheet, Text, View, Image, Button, ImageBackground, TouchableOpacity } from "react-native"
 import * as Google from 'expo-google-app-auth';
+import MainScreen from '../Component/MainScreen'
 
-export default class App extends React.Component {
+export default class AppLogin extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            signedIn: false,
-            name: "",
-            photoUrl: ""
+            activeSession: false,
+            userName: "",
+            profileUrl: ""
         }
     }
-    signIn = async () => {
+    userAuthenticate = async () => {
         try {
-            const result = await Google.logInAsync({
+            const callback_ = await Google.logInAsync({
                 androidClientId:
                     "156487268323-55miqriid99a68c114t683tvgc2u678q.apps.googleusercontent.com",
-                //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
                 scopes: ["profile", "email"]
             })
 
-            if (result.type === "success") {
+            if (callback_.type === "success") {
                 this.setState({
-                    signedIn: true,
-                    name: result.user.name,
-                    photoUrl: result.user.photoUrl
+                    activeSession: true,
+                    userName: callback_.user.userName,
+                    profileUrl: callback_.user.profileUrl
                 })
             } else {
-                console.log("cancelled")
+                console.log("session canceled")
             }
         } catch (e) {
             console.log("error", e)
         }
     }
+
     render() {
+        const userAuthenticate = this.state.activeSession
+        console.log(this.state.activeSession)
         return (
-            <View style={styles.container}>
-                {this.state.signedIn ? (
-                    <LoggedInPage name={this.state.name} photoUrl={this.state.photoUrl} />
-                ) : (
-                        <LoginPage signIn={this.signIn} />
-                    )}
-            </View>
+            <SwitchScreens userAuthenticate={this.userAuthenticate} isLoggedIn={userAuthenticate} />
         )
     }
 }
 
-const LoginPage = props => {
+const AppLoginScreen = props => {
+    const image = { uri: "https://reactjs.org/logo-og.png" };
     return (
-        <View>
-            <Text style={styles.header}>Sign In With Google</Text>
-            <Button title="Sign in with Google" onPress={() => props.signIn()} />
+        <View style={styles.container}>
+            <ImageBackground source={require('../assets/BackGround.jpg')} style={styles.image}></ImageBackground>
+            <TouchableOpacity activeOpacity={.5} onPress={() => props.userAuthenticate()}>
+                <Image style={styles.avatar} source={require('../assets/google.png')} onc={() => props.userAuthenticate()} />
+            </TouchableOpacity>
         </View>
     )
 }
 
-const LoggedInPage = props => {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Welcome:{props.name}</Text>
-            <Image style={styles.image} source={{ uri: props.photoUrl }} />
-        </View>
-    )
+const SwitchScreens = (props) => {
+    console.log(props)
+
+    if (props.isLoggedIn) {
+        return <MainScreen />;
+    }
+    return <AppLoginScreen userAuthenticate={props.userAuthenticate} />;
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -76,10 +77,13 @@ const styles = StyleSheet.create({
     },
     image: {
         marginTop: 15,
-        width: 150,
-        height: 150,
-        borderColor: "rgba(0,0,0,0.2)",
-        borderWidth: 3,
-        borderRadius: 150
-    }
+        width: 500,
+        height: 500
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        marginBottom: 10,
+        alignSelf: 'center',
+    },
 })

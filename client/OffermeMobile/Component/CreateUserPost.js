@@ -11,22 +11,28 @@ import {
     Body,
     CardItem,
     Text,
-    Card
+    Card,
+    Right,
+    Input
 } from 'native-base';
 
 import PostShowCase from './PostShowCase'
-import { StyleSheet, Button, Image } from 'react-native'
+import { StyleSheet, ImageBackground, Button, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import { bool } from 'prop-types';
+import UserInput from './UserInput'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class CreateUserPost extends React.Component {
     state = {
         image: null,
-        show: false
+        show: false,
+        imgresult: Object
     };
+    
+    
 
     selectPicture = async () => {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -41,7 +47,7 @@ export default class CreateUserPost extends React.Component {
                 this.setState({ show: true });
                 this.setState({ image: result.uri });
             }
-
+            this.setState({imgresult: result})
             console.log(result);
         } catch (E) {
             console.log(E);
@@ -72,7 +78,12 @@ export default class CreateUserPost extends React.Component {
     cancel = () => {
         this.setState({ show: false });
     }
+createUserPost = (comment) => {
+    console.log('@@@@@@@@@@@')
+    console.log(this.state.imgresult)
+    console.log(comment)
 
+}
     render() {
         return (
             <Container style={styles.container}>
@@ -81,24 +92,26 @@ export default class CreateUserPost extends React.Component {
                         <Left>
                             <Thumbnail source={require('../assets/promo.png')} />
                             <Body>
-                                <Textarea style={styles.text} rowSpan={6} placeholder="What's on your mind?" />
+                                {/* <Textarea style={styles.text} rowSpan={6} placeholder="What's on your mind?" /> */}
+                                <UserInput onSubmit={this.createUserPost} />
                             </Body>
                         </Left>
                     </CardItem>
                     <CardItem>
                         {this.state.show ? (
-                            <Image style={styles.image} source={{ uri: this.state.image }} />
-                        ) : null}
-
-                        {this.state.show ? (
-                            <MaterialIcon
-                                name={'close'}
-                                size={30}
-                                onPress={this.cancel}
-                            />
+                            <ImageBackground style={styles.image} source={{ uri: this.state.image }}>
+                                <View>
+                                    <MaterialIcon
+                                        style={{ alignSelf: 'flex-end', paddingTop: 5, paddingRight: 5, color: 'red' }}
+                                        name={'close'}
+                                        size={30}
+                                        onPress={this.cancel}
+                                    />
+                                </View>
+                            </ImageBackground>
                         ) : null}
                     </CardItem>
-                    <CardItem>
+                    <CardItem style={styles.iconogy}>
                         <MaterialIcon
                             name={'image'}
                             size={35}
@@ -107,6 +120,12 @@ export default class CreateUserPost extends React.Component {
                             name={'camera'}
                             size={35}
                             onPress={this.getNewPhoto} />
+                        {this.state.show ? (
+                            <MaterialIcon
+                                name={'check'}
+                                size={35}
+                                onPress={this.getNewPhoto} />
+                        ) : null}
                     </CardItem>
                 </Card>
                 <Container>
@@ -134,5 +153,9 @@ const styles = StyleSheet.create({
 
     },
     image: { width: 300, height: 200, backgroundColor: 'gray' },
+    iconogy: {
+        // flex: 1, 
+        flexDirection: "row"
 
+    }
 });

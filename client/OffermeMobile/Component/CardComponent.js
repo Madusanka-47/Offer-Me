@@ -14,23 +14,17 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 export default class CardComponent extends React.Component {
 
     render() {
+        // console.log(this.props.caption)
 
-        const images = {
-
-            "1": require('../assets/feed_images/1.jpg'),
-            "2": require('../assets/feed_images/2.jpg'),
-            "3": require('../assets/feed_images/3.jpg'),
-
-        }
 
         return (
             <Card>
                 <CardItem>
                     <Left>
-                        <Thumbnail source={require('../assets/promo.png')} />
+                        <Thumbnail source={require('../assets/promo.jpg')} />
                         <Body>
-                            <Text>Promo.lk </Text>
-                            <Text note>April 26, 2020</Text>
+                            <Text>Offer Me Automation </Text>
+                            <Text note>{this.props.fetchDate}</Text>
                         </Body>
                     </Left>
                 </CardItem>
@@ -39,12 +33,12 @@ export default class CardComponent extends React.Component {
                         <Text>
                             <Text style={{ fontWeight: "900" }}>
                             </Text>
-                            SwissGear Back Pack with USB Charging and Audio Port 13% off from Rs. 4,970
+                            {this.props.caption}
                         </Text>
                     </Body>
                 </CardItem>
                 <CardItem cardBody>
-                    <Image source={images[this.props.imageSource]} style={{ height: 300, width: null, flex: 1 }} />
+                    <Image source={{ uri: this.props.imageSource }} style={{ height: 300, width: null, flex: 1 }} />
                 </CardItem>
                 {/* <CardItem style={{ height: 45 }}>
                     <Left>
@@ -68,7 +62,7 @@ export default class CardComponent extends React.Component {
                         style={styles.container}
                     // onPress={() => }
                     >
-                        <Icon name="heart" size={30} color={'purple'}/>
+                        <Icon name="heart" size={30} color={'purple'} />
                         <Text>
                             Rate up
                         </Text>
