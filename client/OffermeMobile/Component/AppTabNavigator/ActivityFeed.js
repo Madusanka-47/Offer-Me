@@ -7,6 +7,9 @@ import {
 
 import { Container, Content, Icon } from 'native-base'
 import CardComponent from '../CardComponent'
+import GlobalConfig from '../../global_config.json'
+
+const AppURI = GlobalConfig.RESTServiceURI;
 
 export default class ActivityFeed extends React.Component {
 
@@ -21,7 +24,7 @@ export default class ActivityFeed extends React.Component {
         try {
             return new Promise((reslove, reject) => {
 
-                fetch('https://24d35226.ngrok.io/api/post/getActivityFeeds/5')
+                fetch(AppURI + '/api/post/getActivityFeeds/5')
                     .then((response) => response.json())
                     .then((feedPosts) => {
                         reslove(feedPosts);

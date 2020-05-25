@@ -2,6 +2,11 @@ import React from "react"
 import { StyleSheet, Text, View, Image, Button, ImageBackground, TouchableOpacity } from "react-native"
 import * as Google from 'expo-google-app-auth';
 import MainScreen from '../Component/MainScreen'
+import * as Network from 'expo-network';
+import GlobalConfig from '../global_config.json'
+
+const AppURI = GlobalConfig.RESTServiceURI;
+const clientID = GlobalConfig.ClientID;
 
 export default class AppLogin extends React.Component {
     constructor(props) {
@@ -9,22 +14,39 @@ export default class AppLogin extends React.Component {
         this.state = {
             activeSession: false,
             userName: "",
-            profileUrl: ""
+            profileUrl: "",
+            user: undefined
         }
     }
     userAuthenticate = async () => {
         try {
             const callback_ = await Google.logInAsync({
-                androidClientId:
-                    "156487268323-55miqriid99a68c114t683tvgc2u678q.apps.googleusercontent.com",
+                androidClientId: clientID,
                 scopes: ["profile", "email"]
             })
 
             if (callback_.type === "success") {
+                const mac = await Network.getMacAddressAsync();
+
+                const userParam = JSON.stringify({
+                    MAC: mac,
+                    userObject: callback_,
+                    isSession: true
+                })
+                fetch(AppURI + '/api/User/saveUserLogins', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: userParam
+                });
+
                 this.setState({
                     activeSession: true,
                     userName: callback_.user.userName,
-                    profileUrl: callback_.user.profileUrl
+                    profileUrl: callback_.user.profileUrl,
+                    user: callback_.user
                 })
             } else {
                 console.log("session canceled")
@@ -36,15 +58,13 @@ export default class AppLogin extends React.Component {
 
     render() {
         const userAuthenticate = this.state.activeSession
-        console.log(this.state.activeSession)
         return (
-            <SwitchScreens userAuthenticate={this.userAuthenticate} isLoggedIn={userAuthenticate} />
+            <SwitchScreens userAuthenticate={this.userAuthenticate} isLoggedIn={userAuthenticate} useParam={this.state.user} />
         )
     }
 }
 
 const AppLoginScreen = props => {
-    const image = { uri: "https://reactjs.org/logo-og.png" };
     return (
         <View style={styles.container}>
             <ImageBackground source={require('../assets/BackGround.jpg')} style={styles.image}></ImageBackground>
@@ -56,10 +76,8 @@ const AppLoginScreen = props => {
 }
 
 const SwitchScreens = (props) => {
-    console.log(props)
-
     if (props.isLoggedIn) {
-        return <MainScreen />;
+        return <MainScreen userObj={props} />;
     }
     return <AppLoginScreen userAuthenticate={props.userAuthenticate} />;
 }

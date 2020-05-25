@@ -20,6 +20,7 @@ function MainStackScreen() {
         <MainStack.Navigator>
             <MainStack.Screen name="Offer Me" component={ActivityFeed} />
             <MainStack.Screen options={{ headerTitle: false }} name="Comments" component={CommentList} />
+            <MainStack.Screen options={{ headerTitle: false }} name="AppLogin" component={CommentList} />
         </MainStack.Navigator>
     );
 }
@@ -45,7 +46,9 @@ export default class MainScreen extends React.Component {
                         tabBarVisible: this.getTabBarVisibility(route)
                     })} />
                     <Tab.Screen name="Post" component={CreateUserPost} />
-                    <Tab.Screen name="Profile" component={UserProfile} />
+                    <Tab.Screen name="Profile">
+                        {() => <UserProfile useParam={this.props.userObj} />}
+                    </Tab.Screen>
                     {/* <Tab.Screen name="TestLogin" component={TestLogin} /> */}
                 </Tab.Navigator>
             </NavigationContainer>
