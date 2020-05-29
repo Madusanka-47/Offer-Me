@@ -24,6 +24,7 @@ export default class Comment extends PureComponent {
   };
 
   render() {
+    console.log(this.props.navigation)
     // Pull comment object out of props
     const { comment } = this.props;
     // Pull data needed to display a comment out of comment object
@@ -49,7 +50,7 @@ export default class Comment extends PureComponent {
           </Text>
           <Text style={[styles.text, styles.created]}>
               {/* {moment(created).fromNow()} */}
-              April 26, 2020
+          {this.props.comment.created_at}
               </Text>
         </View>
       </View>

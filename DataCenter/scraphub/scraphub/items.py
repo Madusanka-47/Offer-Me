@@ -10,6 +10,7 @@ import scrapy
 
 class ScraphubItem(scrapy.Item):
     # define the fields for your item here like:
+    postid = scrapy.Field()
     refid = scrapy.Field()
     description = scrapy.Field()
     discount = scrapy.Field()
@@ -19,4 +20,5 @@ class ScraphubItem(scrapy.Item):
     source_href = scrapy.Field()
     fetched_date = scrapy.Field()
     meta = scrapy.Field()
+    is_automated = scrapy.Field()
     pass

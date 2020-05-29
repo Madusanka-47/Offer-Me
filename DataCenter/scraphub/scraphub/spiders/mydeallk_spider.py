@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import os
 import datetime
 import json
-
+import uuid
 
 class MydeallkSpider(scrapy.Spider):
     name = 'Mydeallk'
@@ -52,6 +52,8 @@ class MydeallkSpider(scrapy.Spider):
                 # print(deal_.css('div.col-sm-3').get())
                 # metadata['expire'] = deal_.css('span.expirydate::text').get()
                 items['meta'] =  json.dumps(metadata)
+                items['is_automated'] = True
+                items['postid'] = str(uuid.uuid1()) 
                 # items['current_amount'] = deal_.css('span::text').get()
                 yield items
         tempfolder.cleanup()

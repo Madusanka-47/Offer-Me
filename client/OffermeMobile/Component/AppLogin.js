@@ -55,6 +55,36 @@ export default class AppLogin extends React.Component {
             console.log("error", e)
         }
     }
+    getUserAuthenticationSession() {
+        try {
+            return new Promise((reslove, reject) => {
+
+                fetch(AppURI + '/api/User/getUserAuthSession', {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: JSON.stringify({
+                        MAC: '02:00:00:44:55:66'
+                    })
+                }).then((response) => response.json())
+                    .then((auth) => {
+                        console.log(auth)
+                        reslove(auth);
+                    }).catch((err) => {
+                        reject(err)
+                    })
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // componentDidMount() {
+    //     this.getUserAuthenticationSession().then((auth) => {
+    //         this.setState({ user: auth });
+    //     })
+
+    // }
 
     render() {
         const userAuthenticate = this.state.activeSession

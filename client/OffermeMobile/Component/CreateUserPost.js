@@ -24,6 +24,9 @@ import { bool } from 'prop-types';
 import UserInput from './UserInput'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import GlobalConfig from '../global_config.json'
+
+const AppURI = GlobalConfig.RESTServiceURI;
 
 export default class CreateUserPost extends React.Component {
     state = {
@@ -31,8 +34,8 @@ export default class CreateUserPost extends React.Component {
         show: false,
         imgresult: Object
     };
-    
-    
+
+
 
     selectPicture = async () => {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -47,7 +50,7 @@ export default class CreateUserPost extends React.Component {
                 this.setState({ show: true });
                 this.setState({ image: result.uri });
             }
-            this.setState({imgresult: result})
+            this.setState({ imgresult: result })
             console.log(result);
         } catch (E) {
             console.log(E);
@@ -68,7 +71,7 @@ export default class CreateUserPost extends React.Component {
                 this.setState({ image: result.uri });
 
             }
-
+            this.setState({ imgresult: result })
             console.log(result);
         } catch (E) {
             console.log(E);
@@ -78,12 +81,47 @@ export default class CreateUserPost extends React.Component {
     cancel = () => {
         this.setState({ show: false });
     }
-createUserPost = (comment) => {
-    console.log('@@@@@@@@@@@')
-    console.log(this.state.imgresult)
-    console.log(comment)
+    createUserPost = (postText) => {
 
-}
+        const image = {
+            uri: this.state.imgresult.uri,
+            type: 'image/jpeg',
+            name: 'userUpload' + '-' + Date.now() + '.jpg'
+        }
+
+
+        const imgBody = new FormData();
+
+        imgBody.append('image', image);
+        imgBody.append('description', postText);
+        imgBody.append('email', 'dulanjan.madusanka.dm@gmail.com');
+        imgBody.append('userid', '113486386180655834779');
+        
+        // imgBody.append('postData', postData);
+
+        fetch(AppURI + '/api/post/createUserPost', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
+            },
+            body: imgBody
+        }).then(res => res.json()).then(results => {
+            // // Just me assigning the image url to be seen in the view
+            // const source = { uri: res.imageUrl, isStatic: true };
+            // const images = this.state.images;
+            // images[index] = source;
+            // this.setState({ images });
+            console.log(results)
+        }).catch(error => {
+            console.error(error);
+        });
+
+        console.log('@@@@@@@@@@@')
+        console.log(this.state.imgresult)
+        console.log(postText)
+
+    }
     render() {
         return (
             <Container style={styles.container}>

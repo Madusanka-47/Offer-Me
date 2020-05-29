@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 import tempfile
 import datetime
 import json
+import uuid
+
 
 class PromolkSpider(scrapy.Spider):
     name = 'Promolk'
@@ -46,5 +48,7 @@ class PromolkSpider(scrapy.Spider):
                 items['fetched_date'] = datetime.datetime.today()
                 metadata['expire'] = promo_.css('span.expirydate::text').get()
                 items['meta'] = json.dumps(metadata)
+                items['is_automated'] = True
+                items['postid'] = str(uuid.uuid1()) 
                 yield items
         tempfolder.cleanup()

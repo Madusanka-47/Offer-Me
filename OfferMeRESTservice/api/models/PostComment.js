@@ -9,7 +9,7 @@ const PostCommentSchema = new Schema({
     },
     content: { type: String },
     display_order: {type: Number},
-    created_at: { type: Date },
+    created_at: { type: String },
 });
 
 module.exports = mongoose.model('PostComment', PostCommentSchema); 

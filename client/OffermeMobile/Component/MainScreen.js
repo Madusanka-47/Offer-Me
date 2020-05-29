@@ -15,7 +15,7 @@ import MeterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function MainStackScreen() {
+const MainStackScreen = () => {
     return (
         <MainStack.Navigator>
             <MainStack.Screen name="Offer Me" component={ActivityFeed} />
@@ -27,6 +27,7 @@ function MainStackScreen() {
 
 export default class MainScreen extends React.Component {
     render() {
+        console.log(this.props)
         return (
             <NavigationContainer>
                 <Tab.Navigator

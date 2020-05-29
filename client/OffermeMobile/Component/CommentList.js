@@ -8,28 +8,33 @@ import {
 } from 'react-native';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
-import Pusher from 'pusher-js/react-native';
+// import Pusher from 'pusher-js/react-native';
 import UserInput from './UserInput'
 import { useNavigation } from '@react-navigation/native';
+import GlobalConfig from '../global_config.json'
 
+const AppURI = GlobalConfig.RESTServiceURI;
 // const API_URL = 'http://localhost:9000/api/';
 
 export default class List extends Component {
 
-  constructor(props) {
+  constructor({ props, route, navigation }) {
     super(props);
     this.state = {
       comments: [],
       refreshing: true,
       tasks: [],
-      task: ''
+      task: '',
+      routerParam: route.params
     };
+
     // this.updateText = this.updateText.bind(this);
     // this.postTask = this.postTask.bind(this);
     // this.deleteTask = this.deleteTask.bind(this);
     this.addTask = this.addTask.bind(this);
-    this.removeTask = this.removeTask.bind(this);    
+    this.removeTask = this.removeTask.bind(this);
   }
+
 
 
   // Fetch comments when component is about to mount
@@ -58,6 +63,7 @@ export default class List extends Component {
 
   // Call API to submit a new comment
   submitComment = async (comment) => {
+    console.log(comment)
     // const { user } = this.props;
     // this._scrollView.scrollTo({ y: 0 });
     // try {
@@ -76,6 +82,27 @@ export default class List extends Component {
     // catch (error) {
     //   alert(error);
     // }
+    try {
+
+      const commentParam = JSON.stringify({
+        MAC: '02:00:00:44:55:66',
+        postid: this.state.routerParam.postId,
+        content: comment
+      })
+
+      fetch(AppURI + '/api/PostComment/createComment', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: commentParam
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+
   };
 
   addTask(newTask) {
@@ -91,16 +118,44 @@ export default class List extends Component {
       tasks: prevState.tasks.filter(el => el.id !== id)
     }));
   }
+  getUserPostComments(postId) {
+    try {
+      console.log(AppURI + '/api/PostComment/getPostComments/' + postId)
+      return new Promise((reslove, reject) => {
+
+        fetch(AppURI + '/api/PostComment/getPostComments/' + postId, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+        })
+          .then((response) => response.json())
+          .then((userComments) => {
+            reslove(userComments);
+          }).catch((err) => {
+            reject(err)
+          })
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   componentDidMount() {
-    this.pusher = new Pusher('dc0082564549a4440b3c', {
-      cluster: 'ap2',
-      encrypted: true,
-    });
-    this.channel = this.pusher.subscribe('post_comment');
+    this.getUserPostComments(this.state.routerParam.postId).then((comments) => {
+      console.log(comments)
+      this.setState({ comments: comments });
+    })
+    // this.pusher = new Pusher('dc0082564549a4440b3c', {
+    //   cluster: 'ap2',
+    //   encrypted: true,
+    // });
+    // this.channel = this.pusher.subscribe('post_comment');
 
-    this.channel.bind('inserted', this.addTask);
-    this.channel.bind('deleted', this.removeTask);
+    // this.channel.bind('inserted', this.addTask);
+    // this.channel.bind('deleted', this.removeTask);
+
   }
 
   render() {
