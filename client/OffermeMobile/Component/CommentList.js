@@ -8,10 +8,11 @@ import {
 } from 'react-native';
 import Comment from './Comment';
 import PropTypes from 'prop-types';
-// import Pusher from 'pusher-js/react-native';
+import Pusher from 'pusher-js/react-native';
 import UserInput from './UserInput'
 import { useNavigation } from '@react-navigation/native';
 import GlobalConfig from '../global_config.json'
+import * as Network from 'expo-network';
 
 const AppURI = GlobalConfig.RESTServiceURI;
 // const API_URL = 'http://localhost:9000/api/';
@@ -25,7 +26,8 @@ export default class List extends Component {
       refreshing: true,
       tasks: [],
       task: '',
-      routerParam: route.params
+      routerParam: route.params,
+      userObject: []
     };
 
     // this.updateText = this.updateText.bind(this);
@@ -83,9 +85,9 @@ export default class List extends Component {
     //   alert(error);
     // }
     try {
-
+      const mac = await Network.getMacAddressAsync();
       const commentParam = JSON.stringify({
-        MAC: '02:00:00:44:55:66',
+        MAC: mac,
         postid: this.state.routerParam.postId,
         content: comment
       })
@@ -107,10 +109,12 @@ export default class List extends Component {
 
   addTask(newTask) {
     console.log(newTask)
-    this.setState(prevState => ({
-      comments: prevState.comments.concat(newTask),
-      task: ''
-    }));
+    if (this.state.routerParam.postId == newTask.postid) {
+      this.setState(prevState => ({
+        comments: prevState.comments.concat(newTask),
+        task: ''
+      }));
+    }
   }
 
   removeTask(id) {
@@ -120,9 +124,8 @@ export default class List extends Component {
   }
   getUserPostComments(postId) {
     try {
-      console.log(AppURI + '/api/PostComment/getPostComments/' + postId)
-      return new Promise((reslove, reject) => {
 
+      return new Promise((reslove, reject) => {
         fetch(AppURI + '/api/PostComment/getPostComments/' + postId, {
           method: 'GET',
           headers: {
@@ -142,19 +145,49 @@ export default class List extends Component {
     }
   }
 
+  getActiveUserSession() {
+    try {
+
+      return new Promise((reslove, reject) => {
+        Network.getMacAddressAsync().then((mac) => {
+
+          fetch(AppURI + '/api/user/getUserAuthSession/' + mac, {
+            // method: 'GET',
+            // headers: {
+            //   Accept: 'application/json',
+            //   'Content-Type': 'application/json'
+            // },
+            // body: {MAC:'a'}
+          })
+            .then((response) => response.json())
+            .then((callback) => {
+              console.log(callback)
+              reslove(callback);
+            }).catch((err) => {
+              reject(err)
+            })
+        })
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   componentDidMount() {
     this.getUserPostComments(this.state.routerParam.postId).then((comments) => {
-      console.log(comments)
       this.setState({ comments: comments });
     })
-    // this.pusher = new Pusher('dc0082564549a4440b3c', {
-    //   cluster: 'ap2',
-    //   encrypted: true,
-    // });
-    // this.channel = this.pusher.subscribe('post_comment');
+    this.getActiveUserSession().then((userSession) => {
+      this.setState({ userObject: userSession });
+    })
+    this.pusher = new Pusher('dc0082564549a4440b3c', {
+      cluster: 'ap2',
+      encrypted: true,
+    });
+    this.channel = this.pusher.subscribe('post_comment');
 
-    // this.channel.bind('inserted', this.addTask);
-    // this.channel.bind('deleted', this.removeTask);
+    this.channel.bind('inserted', this.addTask);
+    this.channel.bind('deleted', this.removeTask);
 
   }
 
@@ -168,7 +201,15 @@ export default class List extends Component {
     // const itemId = params ? params.itemId : null;
     // const { params } = this.props.navigation.state;
     const { comments } = this.state;
+    console.log(this.state.userObject)
+    let user = this.state.userObject
+    let userId = ''
+    let optionEnable = false
+    user.forEach(element => {
+      userId = element.user.id
+    });
     return (
+      
       <View style={styles.container}>
         {/* <Button
         onPress={() => this.props.navigation.navigate('MyModal')}
@@ -185,7 +226,7 @@ export default class List extends Component {
         // }
         >
           {/* Render each comment with Comment component */}
-          {comments.map((comment, index) => <Comment comment={comment} key={index} />)}
+          {comments.map((comment, index) => <Comment comment={comment} key={index} loguserId = {userId} />)}
         </ScrollView>
         {/* Comment input box */}
         <UserInput onSubmit={this.submitComment} />

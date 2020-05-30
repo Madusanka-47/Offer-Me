@@ -5,7 +5,8 @@ const PostCommentSchema = new Schema({
     postid: { type: String },
     user: {
         name: { type: String },
-        avatar: { type: String }
+        avatar: { type: String },
+        userid: { type: String }
     },
     content: { type: String },
     display_order: {type: Number},

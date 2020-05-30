@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 // import moment from 'moment';
 import PropTypes from 'prop-types';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class Comment extends PureComponent {
 
@@ -24,7 +25,6 @@ export default class Comment extends PureComponent {
   };
 
   render() {
-    console.log(this.props.navigation)
     // Pull comment object out of props
     const { comment } = this.props;
     // Pull data needed to display a comment out of comment object
@@ -48,10 +48,22 @@ export default class Comment extends PureComponent {
             {' '}
             <Text style={styles.text}>{content}</Text>
           </Text>
-          <Text style={[styles.text, styles.created]}>
+          <View style={styles.commentView}>
+            <Text style={[styles.text, styles.created]}>
               {/* {moment(created).fromNow()} */}
-          {this.props.comment.created_at}
-              </Text>
+              {this.props.comment.created_at}
+            </Text>
+            {this.props.loguserId == this.props.comment.user.userid && this.props.loguserId != '' ? (
+              <MaterialIcon
+                style={{ alignSelf: 'flex-end', paddingRight: 10 }}
+                name={'delete-circle'}
+                size={30}
+                onPress={this.deleteComment}
+              />
+            ) : (
+                <View></View>
+              )}
+          </View>
         </View>
       </View>
     );
@@ -76,12 +88,11 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   avatar: {
-    borderWidth: 1,
-    borderColor: '#EEE',
-    borderRadius: 13,
-    width: 26,
-    height: 26,
+    width: 35,
+    height: 35,
+    borderRadius: 100,
   },
+
   text: {
     color: '#000',
     // fontFamily: 'Avenir',
@@ -93,4 +104,8 @@ const styles = StyleSheet.create({
   created: {
     color: '#BBB',
   },
+  commentView: {
+    flexDirection: "row",
+    justifyContent: 'space-between',
+  }
 });
