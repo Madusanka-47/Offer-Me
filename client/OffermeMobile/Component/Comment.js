@@ -3,11 +3,15 @@ import {
   Image,
   StyleSheet,
   Text,
-  View
+  View,
+  Button, TouchableOpacity
 } from 'react-native';
 // import moment from 'moment';
 import PropTypes from 'prop-types';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import GlobalConfig from '../global_config.json'
+
+const AppURI = GlobalConfig.RESTServiceURI;
 
 export default class Comment extends PureComponent {
 
@@ -23,6 +27,16 @@ export default class Comment extends PureComponent {
       }).isRequired,
     }).isRequired,
   };
+
+  deleteComment = async (id_) => {
+    try {
+      fetch(AppURI + '/api/PostComment/removecomment/' + id_, {
+        method: 'DELETE'
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   render() {
     // Pull comment object out of props
@@ -54,12 +68,10 @@ export default class Comment extends PureComponent {
               {this.props.comment.created_at}
             </Text>
             {this.props.loguserId == this.props.comment.user.userid && this.props.loguserId != '' ? (
-              <MaterialIcon
-                style={{ alignSelf: 'flex-end', paddingRight: 10 }}
-                name={'delete-circle'}
-                size={30}
-                onPress={this.deleteComment}
-              />
+              <TouchableOpacity activeOpacity={.5} onPress={() => this.deleteComment(this.props.comment.commentid)}>
+                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10 }} />
+              </TouchableOpacity>
+
             ) : (
                 <View></View>
               )}

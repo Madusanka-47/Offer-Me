@@ -26,8 +26,9 @@ var watcher = (db) => {
                 channel,
                 'inserted',
                 {
-                    id: comment._id,
+                    _id: comment._id,
                     postid: comment.postid,
+                    commentid: comment.commentid,
                     user: comment.user,
                     content: comment.content,
                     display_order: comment.display_order,

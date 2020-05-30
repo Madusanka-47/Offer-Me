@@ -65,7 +65,6 @@ export default class List extends Component {
 
   // Call API to submit a new comment
   submitComment = async (comment) => {
-    console.log(comment)
     // const { user } = this.props;
     // this._scrollView.scrollTo({ y: 0 });
     // try {
@@ -108,18 +107,18 @@ export default class List extends Component {
   };
 
   addTask(newTask) {
-    console.log(newTask)
     if (this.state.routerParam.postId == newTask.postid) {
       this.setState(prevState => ({
         comments: prevState.comments.concat(newTask),
         task: ''
       }));
     }
+    
   }
 
   removeTask(id) {
     this.setState(prevState => ({
-      tasks: prevState.tasks.filter(el => el.id !== id)
+      comments: prevState.comments.filter(el => el._id !== id)
     }));
   }
   getUserPostComments(postId) {
@@ -161,7 +160,6 @@ export default class List extends Component {
           })
             .then((response) => response.json())
             .then((callback) => {
-              console.log(callback)
               reslove(callback);
             }).catch((err) => {
               reject(err)
@@ -177,6 +175,7 @@ export default class List extends Component {
     this.getUserPostComments(this.state.routerParam.postId).then((comments) => {
       this.setState({ comments: comments });
     })
+   
     this.getActiveUserSession().then((userSession) => {
       this.setState({ userObject: userSession });
     })
@@ -201,7 +200,6 @@ export default class List extends Component {
     // const itemId = params ? params.itemId : null;
     // const { params } = this.props.navigation.state;
     const { comments } = this.state;
-    console.log(this.state.userObject)
     let user = this.state.userObject
     let userId = ''
     let optionEnable = false

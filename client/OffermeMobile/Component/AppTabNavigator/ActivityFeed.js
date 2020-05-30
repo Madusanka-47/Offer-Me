@@ -52,14 +52,18 @@ export default class ActivityFeed extends React.Component {
             <Container style={styles.container}>
                 <Content>
                     {feedActivities.map((prop, key) => {
-                        
-                        const caption = prop.is_automated ? prop.description + ' off ' + prop.discount + ' from ' + prop.base_amount : prop.description
+                        let caption = ''
+                        if (prop.discount != 'undefined' && prop.base_amount != 'undefined') {
+                            caption = prop.is_automated ? prop.description + ' off ' + prop.discount + ' from ' + prop.base_amount : prop.description
+                        } else {
+                            caption = prop.description
+                        }
                         const imgurl = (prop.imgurl).replace('https://storage.cloud.google.com', 'https://storage.googleapis.com')
                         var fetchDate = prop.fetched_date; // this need to convert to initial date format
                         // console.log(fetchDate)
                         return (
-                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated = {prop.is_automated} postId= {prop.postid} 
-                            loggedInUser = {0}/>)
+                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated={prop.is_automated} postId={prop.postid}
+                                loggedInUser={0} />)
                     })}
                 </Content>
             </Container>

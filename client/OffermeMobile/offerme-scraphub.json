@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "offerme-scraphub",
+  "private_key_id": "67004f70ffd78c859f0a5cc384ba5644cf5438cc",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDFioGPBqI5rW8N\ny31PnoSHv4pXhZOb0OYVAM/DcrR30SPaBeHK6q/1jvUlQsYxo+82KClqa9NpLTcu\nMThQhKgtQLSrmkuQQ52tuNR9hvbTv2QVzh4t27dlZZ29wijgezxNagAriUgOEkOI\nLc16msvihQoUWumGg2oAINwMGGr7B5byeUENNQuce6l2/MKrRDcRMOkCzebRCTlX\nNWGivY1jXDMG+Gc3yeW7pK9AMwOtOumgUP5QbPBKtJxak56s19SrRSGJQ9sJtzcf\nHfx8/fyGD6cAxiW3576+kkVkULW3s2KBXIpb7FUTRsBu58VPzUlBo9L0l8G+JrwY\nqJUGao0PAgMBAAECggEABmHuxLXEqRNq+qmf/2ISSyaLrD9DIS4zOOuBSwHaReLK\ng0FcZceGbuszDYSmTbVLxdavW+Jm/sd4uHPbq3JV0rx7+e1u0pb0sce+id3B/N56\nt9+khvvJ5atOWPK8imBA9wldPwrc+qNpbi14raTxwHxm8nhrgi6dzqpBIdzqG/k4\nqa4mXVArHeZq/KVlYh+l/sSnnNruhnbbin9P7Vea9jOLVf1TJhYxFHmS+MXGTPv4\nndeA0UNxZ7EFeJWieyykAv3v84Zv5NssxSmQEpzdx37SErV9TzNIALCNBmDDYsOP\nscnnlTa+0y9yezJ4Drsb8rkS1PnhjLgXCDvBtg+AqQKBgQD+NYmRvATbLl7d6R3a\nX/iuWcCd7IUbGJ1U9sSQWSEX38VhYRJZIp99IqidXcEUyEXPo60nRYI10j1XKN5n\noG5KkTsoeBgq16PGD4xxLMobOBMQN741qfCyqlI5PvAuaV4bnYU9i8yHfeiMzzYN\nPvZ7rQo+VTua1Md877/vVgqwtwKBgQDG7sTCyTw6F/gOV5odAMIPOZECqxqBrvH3\nb4KZO6TDoxUH/L5xxe/QTqy1DdFAd/8AvfC2IFg9sDVckzLhPAfz7ma1P4xa/O7q\nVyjwiyW/h9LufiCos8PDHwDpwmNG/EAQgR3Md1iPRPA5ti/nrNY8xAyrCv5Fqvjg\ndUfrxWJ+aQKBgQC8AjCKnjohOLxk90Ji/dPYbvzsT79p+NxzuEZMU/8Lvy4mBTsi\nvV6jl/yI1ow0qKIpHW60us3ArIs9aTaEAb1QXPUZyyhklzPDCkDeezfGxcQjnHaL\nDfK80Qca25ebW8aEOg4PJNPR6acSbTYWudhmQ+Ztj3AT5QbdOhwEEOi7JQKBgFgm\nFSn64aUcWd6BEtknLNZyO79i8ivkyXNLBiPAOhI2gWs4o2rmuo0jT4Qqyz417dj2\nUWNikbdEDWEoGLOVVjDQwtIthpQK4BMW7B0qi1+DYAQt/2rBvU0Iv+7VJAigXgLy\nM7IWcDeL5KauBCw0efoTJUnlZSaZzA4p6eSfYjWBAoGARMSAvEbPI4NlLx2Kwwrs\n/zl2ivem2RwRgtL9xnCWZvwEOHbCzwFfZcCKjvMHkRbPXh7/VXzTrQ61c0mhIUWo\nCkVS+QEbPtxPQmZc8C/oPpB+au0Q67ekpAzi22G5O7NNyxG782CTxM3oZGbnv1gE\ng5Cz/Ozj/ceGL3PGtWNVqcA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "scraphub-store@offerme-scraphub.iam.gserviceaccount.com",
+  "client_id": "114630072097592962472",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/scraphub-store%40offerme-scraphub.iam.gserviceaccount.com"
+}

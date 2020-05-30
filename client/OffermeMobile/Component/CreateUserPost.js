@@ -51,7 +51,6 @@ export default class CreateUserPost extends React.Component {
                 this.setState({ image: result.uri });
             }
             this.setState({ imgresult: result })
-            console.log(result);
         } catch (E) {
             console.log(E);
         }
@@ -72,7 +71,6 @@ export default class CreateUserPost extends React.Component {
 
             }
             this.setState({ imgresult: result })
-            console.log(result);
         } catch (E) {
             console.log(E);
         }
@@ -116,8 +114,6 @@ export default class CreateUserPost extends React.Component {
         }).catch(error => {
             console.error(error);
         });
-
-        console.log('@@@@@@@@@@@')
         console.log(this.state.imgresult)
         console.log(postText)
 
