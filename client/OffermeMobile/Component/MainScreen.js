@@ -8,12 +8,14 @@ import CommentList from './CommentList'
 import CreateUserPost from './CreateUserPost'
 import UserProfile from './UserProfile'
 // import TestLogin from './AppLogin'
-
+import {Image,View } from "react-native";
 import MeterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import { View } from 'native-base';
 
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
 
 const MainStackScreen = () => {
     return (
@@ -27,7 +29,6 @@ const MainStackScreen = () => {
 
 export default class MainScreen extends React.Component {
     render() {
-        console.log(this.props)
         return (
             <NavigationContainer>
                 <Tab.Navigator

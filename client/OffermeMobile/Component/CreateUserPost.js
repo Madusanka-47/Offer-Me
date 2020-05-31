@@ -25,6 +25,7 @@ import UserInput from './UserInput'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import GlobalConfig from '../global_config.json'
+import * as Network from 'expo-network';
 
 const AppURI = GlobalConfig.RESTServiceURI;
 
@@ -32,7 +33,9 @@ export default class CreateUserPost extends React.Component {
     state = {
         image: null,
         show: false,
-        imgresult: Object
+        imgresult: Object,
+        userObject: [],
+        userPosts: []
     };
 
 
@@ -89,12 +92,21 @@ export default class CreateUserPost extends React.Component {
 
 
         const imgBody = new FormData();
+        let userParam = this.state.userObject
+        let user = undefined
+        userParam.forEach(element => {
+            user = element.user
+        });
 
         imgBody.append('image', image);
         imgBody.append('description', postText);
-        imgBody.append('email', 'dulanjan.madusanka.dm@gmail.com');
-        imgBody.append('userid', '113486386180655834779');
-        
+        imgBody.append('email', user.email);
+        imgBody.append('familyName', user.familyName);
+        imgBody.append('id', user.id);
+        imgBody.append('name', user.name);
+        imgBody.append('photoUrl', user.photoUrl);
+        // imgBody.append('userid', '113486386180655834779');
+
         // imgBody.append('postData', postData);
 
         fetch(AppURI + '/api/post/createUserPost', {
@@ -118,13 +130,69 @@ export default class CreateUserPost extends React.Component {
         console.log(postText)
 
     }
+
+    getActiveUserSession() {
+        try {
+            return new Promise((reslove, reject) => {
+                Network.getMacAddressAsync().then((mac) => {
+                    fetch(AppURI + '/api/user/getUserAuthSession/' + mac, {
+                    }).then((response) => response.json())
+                        .then((callback) => {
+                            reslove(callback);
+                        }).catch((err) => {
+                            reject(err)
+                        })
+                })
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    getSpecificUserPosts() {
+        try {
+            const userParam = this.state.userObject
+            return new Promise((reslove, reject) => {
+                let userId = ''
+
+
+                userParam.forEach(element => {
+                    userId = element.user.id
+                });
+                fetch(AppURI + '/api/post/getSpecificUserPosts/' + userId)
+                    .then((response) => response.json())
+                    .then((feedPosts) => {
+                        reslove(feedPosts);
+                    }).catch((err) => {
+                        reject(err)
+                    })
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    componentDidMount() {
+        this.getActiveUserSession().then((userSession) => {
+            this.setState({ userObject: userSession });
+            this.getSpecificUserPosts().then((userPosts) => {
+                this.setState({ userPosts: userPosts });
+            })
+        })
+
+    }
     render() {
+
+        const user = this.state.userObject
+        let profileUrl = ''
+        user.forEach(element => {
+            profileUrl = element.user.photoUrl
+        });
+        const userPosts = this.state.userPosts
         return (
             <Container style={styles.container}>
                 <Card>
                     <CardItem>
                         <Left>
-                            <Thumbnail source={require('../assets/promo.png')} />
+                            <Thumbnail source={{ uri: profileUrl }} />
                             <Body>
                                 {/* <Textarea style={styles.text} rowSpan={6} placeholder="What's on your mind?" /> */}
                                 <UserInput onSubmit={this.createUserPost} />
@@ -154,18 +222,15 @@ export default class CreateUserPost extends React.Component {
                             name={'camera'}
                             size={35}
                             onPress={this.getNewPhoto} />
-                        {this.state.show ? (
-                            <MaterialIcon
-                                name={'check'}
-                                size={35}
-                                onPress={this.getNewPhoto} />
-                        ) : null}
                     </CardItem>
                 </Card>
                 <Container>
                     <Content>
-                        <PostShowCase />
-                        <PostShowCase />
+                        {userPosts.map((prop, key) => {
+                            return (
+                                <PostShowCase postProp = {prop} key={key}/>
+                            )
+                        })}
                     </Content>
                 </Container>
             </Container>
@@ -186,7 +251,14 @@ const styles = StyleSheet.create({
         paddingTop: 15
 
     },
-    image: { width: 300, height: 200, backgroundColor: 'gray' },
+    image: {
+        // alignContent: "center",
+        marginStart: 15,
+        width: 340,
+        height: 200,
+        backgroundColor: 'gray',
+
+    },
     iconogy: {
         // flex: 1, 
         flexDirection: "row"

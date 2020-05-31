@@ -2,12 +2,15 @@ import React from "react";
 import {
     View,
     Text,
+    RefreshControl,
+    ScrollView,
     StyleSheet
 } from "react-native";
 
 import { Container, Content, Icon } from 'native-base'
 import CardComponent from '../CardComponent'
 import GlobalConfig from '../../global_config.json'
+import * as Network from 'expo-network';
 
 const AppURI = GlobalConfig.RESTServiceURI;
 
@@ -16,12 +19,16 @@ export default class ActivityFeed extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            feedPosts: []
+            feedPosts: [],
+            refreshing: true,
+            userObject: [],
+            userRewards: []
         };
     }
 
     getUserActivityFeedPosts() {
         try {
+            this.setState({ refreshing: true });
             return new Promise((reslove, reject) => {
 
                 fetch(AppURI + '/api/post/getActivityFeeds/5')
@@ -37,22 +44,99 @@ export default class ActivityFeed extends React.Component {
         }
     }
 
+    getActiveUserSession() {
+        try {
+
+            return new Promise((reslove, reject) => {
+                Network.getMacAddressAsync().then((mac) => {
+
+                    fetch(AppURI + '/api/user/getUserAuthSession/' + mac, {
+                        // method: 'GET',
+                        // headers: {
+                        //   Accept: 'application/json',
+                        //   'Content-Type': 'application/json'
+                        // },
+                        // body: {MAC:'a'}
+                    })
+                        .then((response) => response.json())
+                        .then((callback) => {
+                            reslove(callback);
+                        }).catch((err) => {
+                            reject(err)
+                        })
+                })
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    getAwardUserPoint(userId) {
+        try {
+
+            return new Promise((reslove, reject) => {
+                fetch(AppURI + '/api/Point/getCurrentUserAwards/' + userId, {
+                })
+                    .then((response) => response.json())
+                    .then((callback) => {
+                        reslove(callback);
+                    }).catch((err) => {
+                        reject(err)
+                    })
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    onRefresh = () => this.getUserActivityFeedPosts().then((feeds) => {
+        console.log(feeds)
+        this.setState({
+            feedPosts: feeds,
+            refreshing: false,
+        });
+    })
 
     componentDidMount() {
         this.getUserActivityFeedPosts().then((feeds) => {
-            this.setState({ feedPosts: feeds });
+            this.setState({
+                feedPosts: feeds,
+                refreshing: false,
+            });
+        })
+        this.getActiveUserSession().then((userSession) => {
+            this.setState({ userObject: userSession });
+            let userId = ''
+            userSession.forEach(element => {
+                userId = element.user.id
+            });
+            this.getAwardUserPoint(userId).then((callback) => {
+                this.setState({ userRewards: callback })
+            })
         })
 
     }
 
     render() {
-        // console.log(this.props)
         const feedActivities = this.state.feedPosts;
+        const userObject = this.state.userObject;
+        let userSession = []
+        userObject.forEach(element => {
+            userSession = element.user
+        });
+        console.log(this.state.userRewards)
         return (
             <Container style={styles.container}>
-                <Content>
+                <Content
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                        />}>
                     {feedActivities.map((prop, key) => {
                         let caption = ''
+                        let user = ''
+                        let postid = prop.postid
                         if (prop.discount != 'undefined' && prop.base_amount != 'undefined') {
                             caption = prop.is_automated ? prop.description + ' off ' + prop.discount + ' from ' + prop.base_amount : prop.description
                         } else {
@@ -60,11 +144,22 @@ export default class ActivityFeed extends React.Component {
                         }
                         const imgurl = (prop.imgurl).replace('https://storage.cloud.google.com', 'https://storage.googleapis.com')
                         var fetchDate = prop.fetched_date; // this need to convert to initial date format
-                        // console.log(fetchDate)
+                        if (!prop.is_automated) {
+                            user = prop.user
+                        }
                         return (
-                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated={prop.is_automated} postId={prop.postid}
-                                loggedInUser={0} />)
+                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated={prop.is_automated} postId={postid}
+                                loggedInUser={0} user={user} currentUser={userSession} pulled={
+                                    this.state.userRewards.map((prop, key) => {
+                                        if (user.id == prop.auther_id && postid == prop.postid) {
+                                            return true
+                                        } else {
+                                            return false
+                                        }
+                                    })
+                                } />)
                     })}
+
                 </Content>
             </Container>
         );

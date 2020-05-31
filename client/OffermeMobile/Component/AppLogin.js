@@ -68,7 +68,6 @@ export default class AppLogin extends React.Component {
                     })
                 }).then((response) => response.json())
                     .then((auth) => {
-                        console.log(auth)
                         reslove(auth);
                     }).catch((err) => {
                         reject(err)

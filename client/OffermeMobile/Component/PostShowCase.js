@@ -1,39 +1,63 @@
 import React, { Component } from 'react';
-import { Image } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body } from 'native-base';
+import { Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Container, Header, Content, Card, CardItem, Thumbnail, Button, Left, Body, Right } from 'native-base';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class PostShowCase extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        userPosts: [],
+        refreshing: true,
+    };
+}
+  deleteUserPost = async () => {
+    try {
+      console.log('@@@@@@@@@@')
+      // fetch(AppURI + '/api/PostComment/removecomment/' + id_, {
+      //   method: 'DELETE'
+      // });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   render() {
+    const posts = this.props.postProp
     return (
-        <Content>
-          <Card style={{flex: 0}}>
-            <CardItem>
-              <Left>
-                {/* <Thumbnail source={{uri: 'Image URL'}} /> */}
-                <Body>
-                  {/* <Text>NativeBase</Text>
-                  <Text note>April 15, 2016</Text> */}
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Image source={require('../assets/feed_images/2.jpg')} style={{height: 200, width: 390, flex: 1}}/>
-                {/* <Text>
+      <Content>
+        <Card style={{ borderColor: 'purple' }}>
+          <CardItem>
+            <Body>
+              <Image source={{ uri: posts.imgurl }} style={{ height: 200, width: 340, marginStart: 15, marginTop: 30, flex: 1 }} />
+              {/* <Text>
                   //Your text here
                 </Text> */}
-              </Body>
+            </Body>
+          </CardItem>
+          <CardItem>
+            <Left>
+              <Text>{posts.description}</Text>
+            </Left>
             </CardItem>
             <CardItem>
-              <Left>
-                <Button transparent textStyle={{color: '#87838B'}}>
-                  <Icon name="logo-github" />
-                  {/* <Text>1,926 stars</Text> */}
-                </Button>
-              </Left>
+              <TouchableOpacity activeOpacity={.5} onPress={() => this.deleteUserPost}>
+                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, paddingLeft:10 }} />
+              </TouchableOpacity>
+              <Text>LIVE</Text>
+              <Text> Expire In 2 Days</Text>
             </CardItem>
-          </Card>
-        </Content>
+            {/* </Right> */}
+        </Card>
+      </Content>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+    // paddingTop: 20,
+  }
+});
