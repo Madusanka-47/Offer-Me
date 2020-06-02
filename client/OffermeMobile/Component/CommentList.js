@@ -227,7 +227,7 @@ export default class List extends Component {
           {comments.map((comment, index) => <Comment comment={comment} key={index} loguserId = {userId} />)}
         </ScrollView>
         {/* Comment input box */}
-        <UserInput onSubmit={this.submitComment} />
+        <UserInput placeholder = {'Add a comment...'}  buttonName = {'Post'} onSubmit={this.submitComment} />
       </View>
     );
   }

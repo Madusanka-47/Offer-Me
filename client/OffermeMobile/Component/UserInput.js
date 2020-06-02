@@ -26,7 +26,7 @@ export default class Input extends Component {
     if (text) {
       this.setState({ text: undefined }, () => this.props.onSubmit(text));
     } else {
-      alert('Please enter your comment first');
+      alert('Please enter your text first');
     }
   };
 
@@ -34,7 +34,7 @@ export default class Input extends Component {
     return (
       <View style={styles.container}>
         <TextInput
-          placeholder="Add a comment..."
+          placeholder= {this.props.placeholder}
           keyboardType="twitter"
           autoFocus={true}
           style={styles.input}
@@ -46,7 +46,7 @@ export default class Input extends Component {
           style={styles.button}
           onPress={this.submit}
         >
-          <Text style={[styles.text, !this.state.text ? styles.inactive : []]}>Post</Text>
+          <Text style={[styles.text, !this.state.text ? styles.inactive : []]}>{this.props.buttonName}</Text>
         </TouchableOpacity>
       </View>
     );

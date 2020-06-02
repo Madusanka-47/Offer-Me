@@ -13,8 +13,10 @@ import {
     Text,
     Card,
     Right,
-    Input
+    Input,
+    Spinner
 } from 'native-base';
+
 
 import PostShowCase from './PostShowCase'
 import { StyleSheet, ImageBackground, Button, View } from 'react-native'
@@ -26,6 +28,7 @@ import UserInput from './UserInput'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import GlobalConfig from '../global_config.json'
 import * as Network from 'expo-network';
+import Dialog from "react-native-dialog";
 
 const AppURI = GlobalConfig.RESTServiceURI;
 
@@ -35,7 +38,13 @@ export default class CreateUserPost extends React.Component {
         show: false,
         imgresult: Object,
         userObject: [],
-        userPosts: []
+        userPosts: [],
+        dialogVisible: false,
+        postText: '',
+        dateNo: undefined,
+        inputCol: '',
+        validInput: false,
+        progressStrt: false
     };
 
 
@@ -82,8 +91,12 @@ export default class CreateUserPost extends React.Component {
     cancel = () => {
         this.setState({ show: false });
     }
-    createUserPost = (postText) => {
+    createUserPost = () => {
 
+        this.setState({
+            progressStrt: true,
+            show: false
+        });
         const image = {
             uri: this.state.imgresult.uri,
             type: 'image/jpeg',
@@ -99,15 +112,13 @@ export default class CreateUserPost extends React.Component {
         });
 
         imgBody.append('image', image);
-        imgBody.append('description', postText);
+        imgBody.append('description', this.state.postText);
         imgBody.append('email', user.email);
         imgBody.append('familyName', user.familyName);
         imgBody.append('id', user.id);
         imgBody.append('name', user.name);
         imgBody.append('photoUrl', user.photoUrl);
-        // imgBody.append('userid', '113486386180655834779');
-
-        // imgBody.append('postData', postData);
+        imgBody.append('expDate', this.state.dateNo);
 
         fetch(AppURI + '/api/post/createUserPost', {
             method: 'POST',
@@ -117,17 +128,14 @@ export default class CreateUserPost extends React.Component {
             },
             body: imgBody
         }).then(res => res.json()).then(results => {
-            // // Just me assigning the image url to be seen in the view
-            // const source = { uri: res.imageUrl, isStatic: true };
-            // const images = this.state.images;
-            // images[index] = source;
-            // this.setState({ images });
+
+            this.setState({progressStrt: false});
             console.log(results)
         }).catch(error => {
             console.error(error);
         });
         console.log(this.state.imgresult)
-        console.log(postText)
+        console.log(this.state.postText)
 
     }
 
@@ -170,6 +178,41 @@ export default class CreateUserPost extends React.Component {
             console.error(error);
         }
     }
+
+    showDialog = (postText) => {
+        this.setState({
+            dialogVisible: true,
+            postText: postText
+        });
+    };
+
+    handleCancel = () => {
+        this.setState({ dialogVisible: false });
+    };
+
+    handleConfirm = () => {
+        if (this.state.validInput) {
+            this.setState({ dialogVisible: false });
+            this.createUserPost()
+        }
+
+    };
+
+    onChangeText = (dateNo) => {
+        this.setState({ dateNo })
+        if (dateNo == undefined || dateNo === '') {
+            this.setState({
+                inputCol: 'red',
+                validInput: false
+            })
+        } else {
+            this.setState({
+                inputCol: 'black',
+                validInput: true
+            })
+        }
+    };
+
     componentDidMount() {
         this.getActiveUserSession().then((userSession) => {
             this.setState({ userObject: userSession });
@@ -191,14 +234,26 @@ export default class CreateUserPost extends React.Component {
             <Container style={styles.container}>
                 <Card>
                     <CardItem>
+
                         <Left>
                             <Thumbnail source={{ uri: profileUrl }} />
                             <Body>
                                 {/* <Textarea style={styles.text} rowSpan={6} placeholder="What's on your mind?" /> */}
-                                <UserInput onSubmit={this.createUserPost} />
+                                <UserInput placeholder = {'Found anything?...'}  buttonName = {'Create'} onSubmit={this.showDialog} />
+                                <Dialog.Container visible={this.state.dialogVisible}>
+                                    <Dialog.Title>Set Expire Date</Dialog.Title>
+                                    <Dialog.Description>
+                                        Offer valid for ?
+                                    </Dialog.Description>
+                                    <Dialog.Input wrapperStyle={{ borderBottomWidth: 1, width: 200, alignSelf: "center", borderBottomColor: this.state.inputCol }} keyboardType='numeric' onChangeText={this.onChangeText}></Dialog.Input>
+                                    <Dialog.Button label="Cancel" onPress={this.handleCancel} />
+                                    <Dialog.Button label="Ok" onPress={this.handleConfirm} />
+                                </Dialog.Container>
                             </Body>
                         </Left>
                     </CardItem>
+                    {this.state.progressStrt ? (
+                        <Spinner color="red" />) : (null)}
                     <CardItem>
                         {this.state.show ? (
                             <ImageBackground style={styles.image} source={{ uri: this.state.image }}>
@@ -228,7 +283,7 @@ export default class CreateUserPost extends React.Component {
                     <Content>
                         {userPosts.map((prop, key) => {
                             return (
-                                <PostShowCase postProp = {prop} key={key}/>
+                                <PostShowCase postProp={prop} key={key} />
                             )
                         })}
                     </Content>

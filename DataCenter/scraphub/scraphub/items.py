@@ -21,4 +21,5 @@ class ScraphubItem(scrapy.Item):
     fetched_date = scrapy.Field()
     meta = scrapy.Field()
     is_automated = scrapy.Field()
+    expire_date = scrapy.Field()
     pass

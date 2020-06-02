@@ -50,5 +50,6 @@ class PromolkSpider(scrapy.Spider):
                 items['meta'] = json.dumps(metadata)
                 items['is_automated'] = True
                 items['postid'] = str(uuid.uuid1()) 
+                items['expire_date'] = datetime.datetime.today()
                 yield items
         tempfolder.cleanup()

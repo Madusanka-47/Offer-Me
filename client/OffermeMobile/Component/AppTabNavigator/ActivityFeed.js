@@ -124,7 +124,6 @@ export default class ActivityFeed extends React.Component {
         userObject.forEach(element => {
             userSession = element.user
         });
-        console.log(this.state.userRewards)
         return (
             <Container style={styles.container}>
                 <Content
@@ -144,20 +143,23 @@ export default class ActivityFeed extends React.Component {
                         }
                         const imgurl = (prop.imgurl).replace('https://storage.cloud.google.com', 'https://storage.googleapis.com')
                         var fetchDate = prop.fetched_date; // this need to convert to initial date format
+                        var expDate = prop.expire_date;
                         if (!prop.is_automated) {
                             user = prop.user
                         }
                         return (
-                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated={prop.is_automated} postId={postid}
-                                loggedInUser={0} user={user} currentUser={userSession} pulled={
-                                    this.state.userRewards.map((prop, key) => {
-                                        if (user.id == prop.auther_id && postid == prop.postid) {
-                                            return true
-                                        } else {
-                                            return false
-                                        }
-                                    })
-                                } />)
+                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate}  automated={prop.is_automated} postId={postid}
+                                loggedInUser={0} user={user} currentUser={userSession} userRewards={this.state.userRewards} expDate={expDate}/>)
+                                // {
+                                //     this.state.userRewards.map((prop_, key) => {
+                                //         if (user.id == prop_.auther_id && postid == prop_.postid) {
+                                //             console.log(prop_.auther_id)
+                                //             return true
+                                //         } else {
+                                //             continue
+                                //         }
+                                //     })
+                                // } />)
                     })}
 
                 </Content>
@@ -169,6 +171,6 @@ export default class ActivityFeed extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: '#d1d1d1'
     }
 });

@@ -7,7 +7,7 @@ import {
     Alert
 } from "react-native";
 
-import { Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base'
+import { Card, CardItem, Thumbnail, Body, Left, Right, Button, Badge } from 'native-base'
 
 import Icon from 'react-native-vector-icons/EvilIcons';
 import MeterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -62,7 +62,7 @@ export default class CardComponent extends React.Component {
                 }
             ]
         }
-        else{
+        else {
             customMesssage = 'You have alredy awarded points for this member 😥'
             messageParam = [
                 {
@@ -73,12 +73,23 @@ export default class CardComponent extends React.Component {
 
         Alert.alert("Alart", customMesssage, messageParam, { cancelable: false });
     }
-    // componentDidMount() {
-    //     console.log(this.props.pulled[0])
-    //     this.setState({ pullTag: this.props.pulled[0] })
-    // }
+    componentDidMount() {
+        const rewardedObj = this.props.userRewards
+        const postUserObj = this.props.user
+        const postid = this.props.postId
+        rewardedObj.forEach(element => {
+            if (postUserObj.id == element.auther_id && postid == element.postid) {
+                console.log('true')
+            }
+        });
+        // this.setState({ pullTag: this.props.pulled[0] })
+    }
     render() {
         // this.setState({pullTag: this.props.pulled[0]})
+        var date = Date.parse(this.props.expDate)
+        var expdate = Math.round((date - new Date()) / (1000 * 3600 * 24));
+        var color_ = '#31a816'
+        if (expdate > 3 ) {color_ = '#31a816'}else if (expdate > 2) {color_ = '#c4aa23'} else {color_ = '#ed3615'}
         let userName = ''
         let profileUrl = ''
         let rateEnable = this.props.currentUser.id == this.props.user.id || this.props.automated ? false : true
@@ -104,13 +115,17 @@ export default class CardComponent extends React.Component {
                     <Body>
                         <Text>
                             <Text style={{ fontWeight: "900" }}>
-                            </Text>
+                            </Text >
                             {this.props.caption}
                         </Text>
+                        <Text></Text>
+                        <Badge  style={{ justifyContent: "center", alignSelf: "flex-end", backgroundColor: color_}}>
+                            <Text style= {{fontWeight:"bold"}}> Expire in {expdate} D </Text>
+                        </Badge>
                     </Body>
                 </CardItem>
                 <CardItem cardBody>
-                    <Image source={{ uri: this.props.imageSource }} style={{ height: 300, width: null, flex: 1 }} />
+                    <Image source={{ uri: this.props.imageSource }} style={{ height: 270, width: null, flex: 1 }} />
                 </CardItem>
                 <CardItem style={{ height: 20 }}>
                     <Text>{this.props.likes} </Text>

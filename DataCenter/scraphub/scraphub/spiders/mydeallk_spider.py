@@ -54,6 +54,7 @@ class MydeallkSpider(scrapy.Spider):
                 items['meta'] =  json.dumps(metadata)
                 items['is_automated'] = True
                 items['postid'] = str(uuid.uuid1()) 
+                items['expire_date'] = datetime.datetime.today()
                 # items['current_amount'] = deal_.css('span::text').get()
                 yield items
         tempfolder.cleanup()
