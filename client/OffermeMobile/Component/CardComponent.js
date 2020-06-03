@@ -88,8 +88,9 @@ export default class CardComponent extends React.Component {
         // this.setState({pullTag: this.props.pulled[0]})
         var date = Date.parse(this.props.expDate)
         var expdate = Math.round((date - new Date()) / (1000 * 3600 * 24));
-        var color_ = '#31a816'
-        if (expdate > 3 ) {color_ = '#31a816'}else if (expdate > 2) {color_ = '#c4aa23'} else {color_ = '#ed3615'}
+        var color_ = '#41a61f'
+        let expMessage = 'Expire in ' + expdate + ' D'
+        if (expdate > 3) { color_ = '#41a61f' } else if (expdate > 2) { color_ = '#c4aa23' } else if (expdate < 2) { color_ = '#e32020'; expMessage = 'Expire Soon' }
         let userName = ''
         let profileUrl = ''
         let rateEnable = this.props.currentUser.id == this.props.user.id || this.props.automated ? false : true
@@ -119,9 +120,11 @@ export default class CardComponent extends React.Component {
                             {this.props.caption}
                         </Text>
                         <Text></Text>
-                        <Badge  style={{ justifyContent: "center", alignSelf: "flex-end", backgroundColor: color_}}>
-                            <Text style= {{fontWeight:"bold"}}> Expire in {expdate} D </Text>
-                        </Badge>
+                        {this.props.automated ? (null) : (
+                            <Badge style={{ justifyContent: "center", alignSelf: "flex-end", backgroundColor: color_ }}>
+                                <Text style={{ fontWeight: "bold" }}> {expMessage} </Text>
+                            </Badge>
+                        )}
                     </Body>
                 </CardItem>
                 <CardItem cardBody>
@@ -137,7 +140,7 @@ export default class CardComponent extends React.Component {
                             onPress={() => { this.awardUserPoint(this.props.user, this.props.currentUser, this.props.postId) }}
                         >
                             {!this.state.pullTag ? (
-                                <MeterialIcon name="tag-heart-outline" size={35} color='black' />
+                                <MeterialIcon name="tag-heart-outline" size={35} color='#878787' />
                             ) :
                                 (<MeterialIcon name="tag-heart" size={35} color='#d92b25' />
                                 )}
@@ -152,7 +155,7 @@ export default class CardComponent extends React.Component {
                                 postId: this.props.postId
                             })
                         }}>
-                        <Icon name="comment" size={35} />
+                        <Icon name="comment" size={35} color ={'#878787'}/>
                         <Text>
                             Comment
                         </Text>

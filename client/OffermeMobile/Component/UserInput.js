@@ -36,7 +36,7 @@ export default class Input extends Component {
         <TextInput
           placeholder= {this.props.placeholder}
           keyboardType="twitter"
-          autoFocus={true}
+          // autoFocus={true}
           style={styles.input}
           value={this.state.text}
           onChangeText={this.onChangeText}

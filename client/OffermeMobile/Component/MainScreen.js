@@ -8,7 +8,7 @@ import CommentList from './CommentList'
 import CreateUserPost from './CreateUserPost'
 import UserProfile from './UserProfile'
 // import TestLogin from './AppLogin'
-import {Image,View } from "react-native";
+import { Image, View } from "react-native";
 import MeterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 // import { View } from 'native-base';
 
@@ -20,7 +20,16 @@ const Tab = createBottomTabNavigator();
 const MainStackScreen = () => {
     return (
         <MainStack.Navigator>
-            <MainStack.Screen name="Offer Me" component={ActivityFeed} />
+            <MainStack.Screen component={ActivityFeed}  name="Offer Me" options={{
+                title: 'OFFERME',
+                headerStyle: {
+                    backgroundColor: '#1e54b4',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }} />
             <MainStack.Screen options={{ headerTitle: false }} name="Comments" component={CommentList} />
             <MainStack.Screen options={{ headerTitle: false }} name="AppLogin" component={CommentList} />
         </MainStack.Navigator>
@@ -40,7 +49,7 @@ export default class MainScreen extends React.Component {
                                 case 'Post': iconName = forcused ? 'card-text' : 'card-text'; break;
                                 case 'Profile': iconName = forcused ? 'account-circle' : 'account-circle'; break;
                             }
-                            return <MeterialIcon name={iconName} size={30} color={color} />;
+                            return <MeterialIcon name={iconName} size={30} color={'#1e54b4'} />;
                         },
                     })}
                 >

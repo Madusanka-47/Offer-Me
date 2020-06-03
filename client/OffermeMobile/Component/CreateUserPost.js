@@ -225,7 +225,7 @@ export default class CreateUserPost extends React.Component {
     render() {
 
         const user = this.state.userObject
-        let profileUrl = ''
+        let profileUrl = 'https://storage.googleapis.com/scraphub-store/AppData/template.png'
         user.forEach(element => {
             profileUrl = element.user.photoUrl
         });
@@ -253,13 +253,14 @@ export default class CreateUserPost extends React.Component {
                         </Left>
                     </CardItem>
                     {this.state.progressStrt ? (
-                        <Spinner color="red" />) : (null)}
+                        <Spinner color="#000000" />
+                    ) : (null)}
                     <CardItem>
                         {this.state.show ? (
                             <ImageBackground style={styles.image} source={{ uri: this.state.image }}>
                                 <View>
                                     <MaterialIcon
-                                        style={{ alignSelf: 'flex-end', paddingTop: 5, paddingRight: 5, color: 'red' }}
+                                        style={{ alignSelf: 'flex-end', paddingTop: 5, paddingRight: 5, color: '#e32020' }}
                                         name={'close'}
                                         size={30}
                                         onPress={this.cancel}
@@ -272,10 +273,12 @@ export default class CreateUserPost extends React.Component {
                         <MaterialIcon
                             name={'image'}
                             size={35}
+                            color={'#1e54b4'}
                             onPress={this.selectPicture} />
                         <MaterialIcon
                             name={'camera'}
                             size={35}
+                            color={'#1e54b4'}
                             onPress={this.getNewPhoto} />
                     </CardItem>
                 </Card>

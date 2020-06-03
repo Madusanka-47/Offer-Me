@@ -69,7 +69,7 @@ export default class Comment extends PureComponent {
             </Text>
             {this.props.loguserId == this.props.comment.user.userid && this.props.loguserId != '' ? (
               <TouchableOpacity activeOpacity={.5} onPress={() => this.deleteComment(this.props.comment.commentid)}>
-                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10 }} />
+                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, color:'#878787'}} />
               </TouchableOpacity>
 
             ) : (

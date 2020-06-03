@@ -42,7 +42,7 @@ export default class PostShowCase extends Component {
             </CardItem>
             <CardItem>
               <TouchableOpacity activeOpacity={.5} onPress={() => this.deleteUserPost}>
-                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, paddingLeft:10 }} />
+                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, paddingLeft:1, color: '#878787' }} />
               </TouchableOpacity>
               <Text>LIVE</Text>
               <Text> Expire In 2 Days</Text>
