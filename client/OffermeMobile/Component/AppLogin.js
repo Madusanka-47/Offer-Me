@@ -1,12 +1,30 @@
 import React from "react"
-import { StyleSheet, Text, View, Image, Button, ImageBackground, TouchableOpacity } from "react-native"
+import {
+    StyleSheet,
+    View,
+    Image,
+    ImageBackground,
+    TouchableOpacity,
+    ToastAndroid
+} from "react-native"
+
 import * as Google from 'expo-google-app-auth';
 import MainScreen from '../Component/MainScreen'
 import * as Network from 'expo-network';
 import GlobalConfig from '../global_config.json'
 
+/**
+ * @Dulanjan
+ * Get configuration paths from the global config file.
+ * All the configuration gose under this section
+ */
+//#region 
 const AppURI = GlobalConfig.RESTServiceURI;
 const clientID = GlobalConfig.ClientID;
+const BasePath = GlobalConfig.BasePath;
+const pageImg = BasePath + GlobalConfig.clientAssest.login_background;
+const pageLoginLogo = BasePath + GlobalConfig.clientAssest.google_logo;
+//#endregion
 
 export default class AppLogin extends React.Component {
     constructor(props) {
@@ -49,41 +67,54 @@ export default class AppLogin extends React.Component {
                     user: callback_.user
                 })
             } else {
-                console.log("session canceled")
+                ToastAndroid.showWithGravity(
+                    "We couldn't able to connect you with google",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER
+                );
             }
         } catch (e) {
-            console.log("error", e)
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
     getUserAuthenticationSession() {
         try {
             return new Promise((reslove, reject) => {
-
-                fetch(AppURI + '/api/User/getUserAuthSession', {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                    body: JSON.stringify({
-                        MAC: '02:00:00:44:55:66'
-                    })
-                }).then((response) => response.json())
-                    .then((auth) => {
-                        reslove(auth);
-                    }).catch((err) => {
-                        reject(err)
-                    })
+                Network.getMacAddressAsync().then((mac) => {
+                    fetch(AppURI + '/api/user/getUserAuthSession/' + mac)
+                        .then((response) => response.json())
+                        .then((callback) => {
+                            reslove(callback);
+                        }).catch((err) => {
+                            reject(err)
+                        })
+                })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
 
-    // componentDidMount() {
-    //     this.getUserAuthenticationSession().then((auth) => {
-    //         this.setState({ user: auth });
-    //     })
-
-    // }
+    componentDidMount() {
+        this.getUserAuthenticationSession().then((auth) => {
+            auth.forEach(element => {
+                this.setState({
+                    activeSession: element.isActive,
+                    userName: element.user.name,
+                    profileUrl: element.user.photoUrl,
+                    user: element.user
+                })
+            });
+        })
+    }
 
     render() {
         const userAuthenticate = this.state.activeSession
@@ -96,9 +127,9 @@ export default class AppLogin extends React.Component {
 const AppLoginScreen = props => {
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../assets/BackGround.jpg')} style={styles.image}></ImageBackground>
+            <ImageBackground source={{ uri: pageImg }} style={styles.image}></ImageBackground>
             <TouchableOpacity activeOpacity={.5} onPress={() => props.userAuthenticate()}>
-                <Image style={styles.avatar} source={require('../assets/google.png')} onc={() => props.userAuthenticate()} />
+                <Image style={styles.avatar} source={{ uri: pageLoginLogo }} onc={() => props.userAuthenticate()} />
             </TouchableOpacity>
         </View>
     )

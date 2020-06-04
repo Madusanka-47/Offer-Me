@@ -1,26 +1,46 @@
 import React from 'react';
 import {
-    View,
     Text,
     StyleSheet,
     Image,
     Alert
 } from "react-native";
 
-import { Card, CardItem, Thumbnail, Body, Left, Right, Button, Badge } from 'native-base'
+import {
+    Card,
+    CardItem,
+    Thumbnail,
+    Body,
+    Left,
+    Button,
+    Badge
+} from 'native-base'
 
 import Icon from 'react-native-vector-icons/EvilIcons';
 import MeterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GlobalConfig from '../global_config.json'
+import Moment from 'moment';
 
+/**
+ * @Dulanjan
+ * Get configuration paths from the global config file.
+ * All the configuration gose under this section
+ */
+//#region 
 const AppURI = GlobalConfig.RESTServiceURI;
+const BasePath = GlobalConfig.BasePath;
+const automateImg = BasePath + GlobalConfig.clientAssest.automate_logo;
+const rewardAlart = GlobalConfig.clientMessages.reward_alart;
+const rewardOk = GlobalConfig.clientMessages.reward_alart_ok;
+const BotName = GlobalConfig.BotName;
+//#endregion
 
 export default class CardComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            pullTag: false
+            pullTag: this.props.pullTag
         }
     }
     saveAwardedUserPoints(postUser, currentUser, postId) {
@@ -43,16 +63,14 @@ export default class CardComponent extends React.Component {
         this.setState({ pullTag: true })
     }
 
-    awardUserPoint = (postUser, currentUser, postId) => {
+    awardUserPoint = (postUser, currentUser, postId, tagpulled) => {
         let customMesssage = ''
         let messageParam = []
-
-        if (!this.state.pullTag) {
-            customMesssage = 'You are about to reward this member with 10+ ❤️️ points. Please confirm'
+        if (!tagpulled) {
+            customMesssage = rewardAlart
             messageParam = [
                 {
                     text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 {
@@ -63,34 +81,23 @@ export default class CardComponent extends React.Component {
             ]
         }
         else {
-            customMesssage = 'You have alredy awarded points for this member 😥'
+            customMesssage = rewardOk
             messageParam = [
                 {
-                    text: "OK", onPress: () => console.log("Cancel Pressed")
+                    text: "OK"
                 }
             ]
         }
 
         Alert.alert("Alart", customMesssage, messageParam, { cancelable: false });
     }
-    componentDidMount() {
-        const rewardedObj = this.props.userRewards
-        const postUserObj = this.props.user
-        const postid = this.props.postId
-        rewardedObj.forEach(element => {
-            if (postUserObj.id == element.auther_id && postid == element.postid) {
-                console.log('true')
-            }
-        });
-        // this.setState({ pullTag: this.props.pulled[0] })
-    }
-    render() {
-        // this.setState({pullTag: this.props.pulled[0]})
+
+    render() { 
         var date = Date.parse(this.props.expDate)
         var expdate = Math.round((date - new Date()) / (1000 * 3600 * 24));
         var color_ = '#41a61f'
         let expMessage = 'Expire in ' + expdate + ' D'
-        if (expdate > 3) { color_ = '#41a61f' } else if (expdate > 2) { color_ = '#c4aa23' } else if (expdate < 2) { color_ = '#e32020'; expMessage = 'Expire Soon' }
+        if (expdate > 3) { color_ = '#41a61f' } else if (expdate > 2) { color_ = '#e3b836' } else if (expdate < 2) { color_ = '#e32020'; expMessage = 'Expire Soon' }
         let userName = ''
         let profileUrl = ''
         let rateEnable = this.props.currentUser.id == this.props.user.id || this.props.automated ? false : true
@@ -98,8 +105,8 @@ export default class CardComponent extends React.Component {
             userName = this.props.user.name
             profileUrl = this.props.user.photoUrl
         } else {
-            userName = 'Offer Me Automation'
-            profileUrl = 'https://storage.googleapis.com/scraphub-store/AppData/DataCenter.jpg'
+            userName = BotName
+            profileUrl = automateImg
         }
         return (
             <Card>
@@ -107,8 +114,8 @@ export default class CardComponent extends React.Component {
                     <Left>
                         <Thumbnail source={{ uri: profileUrl }} />
                         <Body>
-                            <Text>{userName}</Text>
-                            <Text note>{this.props.fetchDate}</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{userName}</Text>
+                            <Text note style={{ color: '#BBB' }}>{Moment(this.props.fetchDate).format('MMM D') + ' at ' + Moment(this.props.fetchDate).format('hh:mm A')}</Text>
                         </Body>
                     </Left>
                 </CardItem>
@@ -137,9 +144,9 @@ export default class CardComponent extends React.Component {
                     {!rateEnable ? (null) : (
                         <Button transparent
                             style={styles.container}
-                            onPress={() => { this.awardUserPoint(this.props.user, this.props.currentUser, this.props.postId) }}
+                            onPress={() => { this.awardUserPoint(this.props.user, this.props.currentUser, this.props.postId, this.props.pullTag) }}
                         >
-                            {!this.state.pullTag ? (
+                            {!this.props.pullTag ? (
                                 <MeterialIcon name="tag-heart-outline" size={35} color='#878787' />
                             ) :
                                 (<MeterialIcon name="tag-heart" size={35} color='#d92b25' />
@@ -155,7 +162,7 @@ export default class CardComponent extends React.Component {
                                 postId: this.props.postId
                             })
                         }}>
-                        <Icon name="comment" size={35} color ={'#878787'}/>
+                        <Icon name="comment" size={35} color={'#878787'} />
                         <Text>
                             Comment
                         </Text>

@@ -1,10 +1,8 @@
 import React from "react";
 import {
-    View,
-    Text,
     RefreshControl,
-    ScrollView,
-    StyleSheet
+    StyleSheet,
+    ToastAndroid
 } from "react-native";
 
 import { Container, Content, Icon } from 'native-base'
@@ -12,7 +10,16 @@ import CardComponent from '../CardComponent'
 import GlobalConfig from '../../global_config.json'
 import * as Network from 'expo-network';
 
+/**
+ * @Dulanjan
+ * Get configuration paths from the global config file.
+ * All the configuration gose under this section
+ */
+//#region 
 const AppURI = GlobalConfig.RESTServiceURI;
+const BasePath = GlobalConfig.BasePath;
+const SecuredPath = GlobalConfig.SecuredPath;
+//#endregion
 
 export default class ActivityFeed extends React.Component {
 
@@ -30,7 +37,6 @@ export default class ActivityFeed extends React.Component {
         try {
             this.setState({ refreshing: true });
             return new Promise((reslove, reject) => {
-
                 fetch(AppURI + '/api/post/getActivityFeeds/5')
                     .then((response) => response.json())
                     .then((feedPosts) => {
@@ -40,24 +46,19 @@ export default class ActivityFeed extends React.Component {
                     })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
 
     getActiveUserSession() {
         try {
-
             return new Promise((reslove, reject) => {
                 Network.getMacAddressAsync().then((mac) => {
-
-                    fetch(AppURI + '/api/user/getUserAuthSession/' + mac, {
-                        // method: 'GET',
-                        // headers: {
-                        //   Accept: 'application/json',
-                        //   'Content-Type': 'application/json'
-                        // },
-                        // body: {MAC:'a'}
-                    })
+                    fetch(AppURI + '/api/user/getUserAuthSession/' + mac)
                         .then((response) => response.json())
                         .then((callback) => {
                             reslove(callback);
@@ -67,16 +68,18 @@ export default class ActivityFeed extends React.Component {
                 })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
-
+    //TODO: This function wont work proprly
     getAwardUserPoint(userId) {
         try {
-
             return new Promise((reslove, reject) => {
-                fetch(AppURI + '/api/Point/getCurrentUserAwards/' + userId, {
-                })
+                fetch(AppURI + '/api/Point/getCurrentUserAwards/' + userId)
                     .then((response) => response.json())
                     .then((callback) => {
                         reslove(callback);
@@ -85,12 +88,15 @@ export default class ActivityFeed extends React.Component {
                     })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
 
     onRefresh = () => this.getUserActivityFeedPosts().then((feeds) => {
-        console.log(feeds)
         this.setState({
             feedPosts: feeds,
             refreshing: false,
@@ -114,7 +120,6 @@ export default class ActivityFeed extends React.Component {
                 this.setState({ userRewards: callback })
             })
         })
-
     }
 
     render() {
@@ -141,27 +146,23 @@ export default class ActivityFeed extends React.Component {
                         } else {
                             caption = prop.description
                         }
-                        const imgurl = (prop.imgurl).replace('https://storage.cloud.google.com', 'https://storage.googleapis.com')
-                        var fetchDate = prop.fetched_date; // this need to convert to initial date format
+                        const imgurl = (prop.imgurl).replace(SecuredPath, BasePath)
+                        var fetchDate = prop.fetched_date;
                         var expDate = prop.expire_date;
                         if (!prop.is_automated) {
                             user = prop.user
                         }
+                        const rewards = this.state.userRewards;
+                        let pulltag = false
+                        rewards.forEach(element => {
+                            if (user.id == element.auther_id && postid == element.postid) {
+                                pulltag = true
+                            }
+                        });
                         return (
-                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate}  automated={prop.is_automated} postId={postid}
-                                loggedInUser={0} user={user} currentUser={userSession} userRewards={this.state.userRewards} expDate={expDate}/>)
-                                // {
-                                //     this.state.userRewards.map((prop_, key) => {
-                                //         if (user.id == prop_.auther_id && postid == prop_.postid) {
-                                //             console.log(prop_.auther_id)
-                                //             return true
-                                //         } else {
-                                //             continue
-                                //         }
-                                //     })
-                                // } />)
+                            <CardComponent imageSource={imgurl} likes="" key={key} navigate={this.props.navigation} caption={caption} fetchDate={fetchDate} automated={prop.is_automated} postId={postid}
+                                loggedInUser={0} user={user} currentUser={userSession} pullTag={pulltag} expDate={expDate} />)
                     })}
-
                 </Content>
             </Container>
         );
