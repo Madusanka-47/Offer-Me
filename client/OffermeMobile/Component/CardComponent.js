@@ -97,7 +97,7 @@ export default class CardComponent extends React.Component {
         var expdate = Math.round((date - new Date()) / (1000 * 3600 * 24));
         var color_ = '#41a61f'
         let expMessage = 'Expire in ' + expdate + ' D'
-        if (expdate > 3) { color_ = '#41a61f' } else if (expdate > 2) { color_ = '#e3b836' } else if (expdate < 2) { color_ = '#e32020'; expMessage = 'Expire Soon' }
+        if (expdate > 3) { color_ = '#41a61f' } else if (expdate >= 2) { color_ = '#e3b836' } else if (expdate < 2) { color_ = '#e32020'; expMessage = 'Expire Soon' }
         let userName = ''
         let profileUrl = ''
         let rateEnable = this.props.currentUser.id == this.props.user.id || this.props.automated ? false : true
@@ -146,7 +146,7 @@ export default class CardComponent extends React.Component {
                             style={styles.container}
                             onPress={() => { this.awardUserPoint(this.props.user, this.props.currentUser, this.props.postId, this.props.pullTag) }}
                         >
-                            {!this.props.pullTag ? (
+                            {!this.state.pullTag ? (
                                 <MeterialIcon name="tag-heart-outline" size={35} color='#878787' />
                             ) :
                                 (<MeterialIcon name="tag-heart" size={35} color='#d92b25' />

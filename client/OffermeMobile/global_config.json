@@ -1,5 +1,5 @@
 {
-    "RESTServiceURI": "https://96aca6aa4043.ngrok.io",
+    "RESTServiceURI": "https://f1d11f32277f.ngrok.io",
     "ClientID": "156487268323-55miqriid99a68c114t683tvgc2u678q.apps.googleusercontent.com",
     "grayScale": "",
     "BasePath": "https://storage.googleapis.com/scraphub-store/",
@@ -7,11 +7,15 @@
     "clientAssest": {
         "login_background": "AppData/BackGround.jpg",
         "google_logo": "AppData/google.png",
-        "automate_logo": "AppData/DataCenter.jpg"
+        "automate_logo": "AppData/DataCenter.jpg",
+        "profile_template": "AppData/template.png",
+        "profile_banner": "AppData/offerme.png",
+        "signout_google": "AppData/google-logo.png"
     },
     "clientMessages": {
         "reward_alart": "You are about to reward this member with 10+ ❤️️ points. Please confirm",
         "reward_alart_ok": "You have alredy awarded points for this member 😎"
     },
-    "BotName": "Offer Me Automation"
+    "BotName": "Offer Me Automation",
+    "userPostPrefix": "userUpload"
 }

@@ -4,18 +4,15 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Button
+  ToastAndroid
 } from 'react-native';
 import Comment from './Comment';
-import PropTypes from 'prop-types';
 import Pusher from 'pusher-js/react-native';
 import UserInput from './UserInput'
-import { useNavigation } from '@react-navigation/native';
 import GlobalConfig from '../global_config.json'
 import * as Network from 'expo-network';
 
 const AppURI = GlobalConfig.RESTServiceURI;
-// const API_URL = 'http://localhost:9000/api/';
 
 export default class List extends Component {
 
@@ -30,59 +27,11 @@ export default class List extends Component {
       userObject: []
     };
 
-    // this.updateText = this.updateText.bind(this);
-    // this.postTask = this.postTask.bind(this);
-    // this.deleteTask = this.deleteTask.bind(this);
     this.addTask = this.addTask.bind(this);
     this.removeTask = this.removeTask.bind(this);
   }
 
-
-
-  // Fetch comments when component is about to mount
-  //   componentWillMount = () => this.fetchComments();
-
-  // Re-fetch comments when user pulls the list down
-  //   onRefresh = () => this.fetchComments();
-
-  // Call API to fetch comments
-  //   fetchComments = async () => {
-  //     this.setState({ refreshing: true });
-  //     try {
-  //       // Make API call
-  //       const response = await get('comments');
-  //       // Convert response to JSON
-  //       const json = await response.json();
-  //       this.setState({
-  //         refreshing: false,
-  //         comments: json.comments
-  //       });
-  //     }
-  //     catch (error) {
-  //       alert(error);
-  //     }
-  //   };
-
-  // Call API to submit a new comment
   submitComment = async (comment) => {
-    // const { user } = this.props;
-    // this._scrollView.scrollTo({ y: 0 });
-    // try {
-    //   // Make API call
-    //   const response = await put('comments', {
-    //     user_id: user._id,
-    //     content: comment,
-    //   });
-    //   // Convert response to JSON
-    //   const json = await response.json();
-    //   this.setState({
-    //     // Push new comment to state before existing ones
-    //     comments: [json.comment, ...this.state.comments]
-    //   });
-    // }
-    // catch (error) {
-    //   alert(error);
-    // }
     try {
       const mac = await Network.getMacAddressAsync();
       const commentParam = JSON.stringify({
@@ -101,7 +50,11 @@ export default class List extends Component {
       });
 
     } catch (error) {
-      console.error(error);
+      ToastAndroid.showWithGravity(
+        "Something went wrong. please contact support",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
 
   };
@@ -113,7 +66,7 @@ export default class List extends Component {
         task: ''
       }));
     }
-    
+
   }
 
   removeTask(id) {
@@ -140,7 +93,11 @@ export default class List extends Component {
           })
       })
     } catch (error) {
-      console.error(error);
+      ToastAndroid.showWithGravity(
+        "Something went wrong. please contact support",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
   }
 
@@ -150,14 +107,7 @@ export default class List extends Component {
       return new Promise((reslove, reject) => {
         Network.getMacAddressAsync().then((mac) => {
 
-          fetch(AppURI + '/api/user/getUserAuthSession/' + mac, {
-            // method: 'GET',
-            // headers: {
-            //   Accept: 'application/json',
-            //   'Content-Type': 'application/json'
-            // },
-            // body: {MAC:'a'}
-          })
+          fetch(AppURI + '/api/user/getUserAuthSession/' + mac)
             .then((response) => response.json())
             .then((callback) => {
               reslove(callback);
@@ -167,7 +117,11 @@ export default class List extends Component {
         })
       })
     } catch (error) {
-      console.error(error);
+      ToastAndroid.showWithGravity(
+        "Something went wrong. please contact support",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
   }
 
@@ -175,7 +129,7 @@ export default class List extends Component {
     this.getUserPostComments(this.state.routerParam.postId).then((comments) => {
       this.setState({ comments: comments });
     })
-   
+
     this.getActiveUserSession().then((userSession) => {
       this.setState({ userObject: userSession });
     })
@@ -191,14 +145,6 @@ export default class List extends Component {
   }
 
   render() {
-    // let abc = this.state.tasks.map(itm => itm)
-    // this.state.comments.push(this.state.task)
-    // console.log(this.state.comments)
-    // const { navigate } = this.props.navigation;
-    // Pull comments out of state
-    // const { params } = this.props.navigation.state;
-    // const itemId = params ? params.itemId : null;
-    // const { params } = this.props.navigation.state;
     const { comments } = this.state;
     let user = this.state.userObject
     let userId = ''
@@ -207,31 +153,14 @@ export default class List extends Component {
       userId = element.user.id
     });
     return (
-      
       <View style={styles.container}>
-        {/* <Button
-        onPress={() => this.props.navigation.navigate('MyModal')}
-        title="Close"
-      /> */}
-        {/* Scrollable list */}
-        <ScrollView
-        // ref={(scrollView) => { this._scrollView = scrollView; }}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={this.state.refreshing}
-        //   //   onRefresh={this.onRefresh}
-        //   />
-        // }
-        >
-          {/* Render each comment with Comment component */}
-          {comments.map((comment, index) => <Comment comment={comment} key={index} loguserId = {userId} />)}
+        <ScrollView>
+          {comments.map((comment, index) => <Comment comment={comment} key={index} loguserId={userId} />)}
         </ScrollView>
-        {/* Comment input box */}
-        <UserInput placeholder = {'Add a comment...'}  buttonName = {'Post'} onSubmit={this.submitComment} />
+        <UserInput placeholder={'Add a comment...'} buttonName={'Post'} onSubmit={this.submitComment} />
       </View>
     );
   }
-
 }
 
 const styles = StyleSheet.create({

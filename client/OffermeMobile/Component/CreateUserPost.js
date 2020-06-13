@@ -1,28 +1,20 @@
-<script src="http://localhost:8097"></script>
 import React from 'react'
 import {
     Container,
-    Header,
     Content,
-    Form,
-    Textarea,
     Left,
     Thumbnail,
     Body,
     CardItem,
-    Text,
     Card,
-    Right,
-    Input,
     Spinner
 } from 'native-base';
 
 
 import PostShowCase from './PostShowCase'
-import { StyleSheet, ImageBackground, Button, View } from 'react-native'
+import { StyleSheet, ImageBackground, ToastAndroid, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-import { bool } from 'prop-types';
 import UserInput from './UserInput'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -31,6 +23,9 @@ import * as Network from 'expo-network';
 import Dialog from "react-native-dialog";
 
 const AppURI = GlobalConfig.RESTServiceURI;
+const imgPrefix = GlobalConfig.userPostPrefix;
+const BasePath = GlobalConfig.BasePath;
+const ProfileTemplate = BasePath + GlobalConfig.clientAssest.profile_template;
 
 export default class CreateUserPost extends React.Component {
     state = {
@@ -46,8 +41,6 @@ export default class CreateUserPost extends React.Component {
         validInput: false,
         progressStrt: false
     };
-
-
 
     selectPicture = async () => {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -91,52 +84,61 @@ export default class CreateUserPost extends React.Component {
     cancel = () => {
         this.setState({ show: false });
     }
+
+
     createUserPost = () => {
+        try {
+            this.setState({
+                progressStrt: true,
+                show: false
+            });
+            const image = {
+                uri: this.state.imgresult.uri,
+                type: 'image/jpeg',
+                name: imgPrefix + '-' + Date.now() + '.jpg'
+            }
 
-        this.setState({
-            progressStrt: true,
-            show: false
-        });
-        const image = {
-            uri: this.state.imgresult.uri,
-            type: 'image/jpeg',
-            name: 'userUpload' + '-' + Date.now() + '.jpg'
+
+            const imgBody = new FormData();
+            let userParam = this.state.userObject
+            let user = undefined
+            userParam.forEach(element => {
+                user = element.user
+            });
+
+            imgBody.append('image', image);
+            imgBody.append('description', this.state.postText);
+            imgBody.append('email', user.email);
+            imgBody.append('familyName', user.familyName);
+            imgBody.append('id', user.id);
+            imgBody.append('name', user.name);
+            imgBody.append('photoUrl', user.photoUrl);
+            imgBody.append('expDate', this.state.dateNo);
+
+            fetch(AppURI + '/api/post/createUserPost', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: imgBody
+            }).then(res => res.json()).then(results => {
+
+                this.setState({ progressStrt: false });
+                console.log(results)
+            }).catch(error => {
+                console.error(error);
+            });
+            console.log(this.state.imgresult)
+            console.log(this.state.postText)
         }
-
-
-        const imgBody = new FormData();
-        let userParam = this.state.userObject
-        let user = undefined
-        userParam.forEach(element => {
-            user = element.user
-        });
-
-        imgBody.append('image', image);
-        imgBody.append('description', this.state.postText);
-        imgBody.append('email', user.email);
-        imgBody.append('familyName', user.familyName);
-        imgBody.append('id', user.id);
-        imgBody.append('name', user.name);
-        imgBody.append('photoUrl', user.photoUrl);
-        imgBody.append('expDate', this.state.dateNo);
-
-        fetch(AppURI + '/api/post/createUserPost', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data',
-            },
-            body: imgBody
-        }).then(res => res.json()).then(results => {
-
-            this.setState({progressStrt: false});
-            console.log(results)
-        }).catch(error => {
-            console.error(error);
-        });
-        console.log(this.state.imgresult)
-        console.log(this.state.postText)
-
+        catch (err) {
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
+        }
     }
 
     getActiveUserSession() {
@@ -153,7 +155,11 @@ export default class CreateUserPost extends React.Component {
                 })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
     getSpecificUserPosts() {
@@ -175,15 +181,27 @@ export default class CreateUserPost extends React.Component {
                     })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
 
     showDialog = (postText) => {
-        this.setState({
-            dialogVisible: true,
-            postText: postText
-        });
+        if (this.state.imgresult.uri == undefined) {
+            ToastAndroid.showWithGravity(
+                "Add a picture to share with others",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
+        } else {
+            this.setState({
+                dialogVisible: true,
+                postText: postText
+            });
+        }
     };
 
     handleCancel = () => {
@@ -223,9 +241,8 @@ export default class CreateUserPost extends React.Component {
 
     }
     render() {
-
         const user = this.state.userObject
-        let profileUrl = 'https://storage.googleapis.com/scraphub-store/AppData/template.png'
+        let profileUrl = ProfileTemplate
         user.forEach(element => {
             profileUrl = element.user.photoUrl
         });
@@ -234,12 +251,10 @@ export default class CreateUserPost extends React.Component {
             <Container style={styles.container}>
                 <Card>
                     <CardItem>
-
                         <Left>
                             <Thumbnail source={{ uri: profileUrl }} />
                             <Body>
-                                {/* <Textarea style={styles.text} rowSpan={6} placeholder="What's on your mind?" /> */}
-                                <UserInput placeholder = {'Found anything?...'}  buttonName = {'Create'} onSubmit={this.showDialog} />
+                                <UserInput placeholder={'Found anything?...'} buttonName={'Create'} onSubmit={this.showDialog} />
                                 <Dialog.Container visible={this.state.dialogVisible}>
                                     <Dialog.Title>Set Expire Date</Dialog.Title>
                                     <Dialog.Description>
@@ -310,7 +325,6 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        // alignContent: "center",
         marginStart: 15,
         width: 340,
         height: 200,
@@ -318,7 +332,6 @@ const styles = StyleSheet.create({
 
     },
     iconogy: {
-        // flex: 1, 
         flexDirection: "row"
 
     }

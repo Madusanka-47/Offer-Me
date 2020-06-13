@@ -4,9 +4,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Button, TouchableOpacity
+  TouchableOpacity,
+  ToastAndroid
 } from 'react-native';
-// import moment from 'moment';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import GlobalConfig from '../global_config.json'
@@ -16,11 +16,8 @@ const AppURI = GlobalConfig.RESTServiceURI;
 export default class Comment extends PureComponent {
 
   static propTypes = {
-    // Comment object shape
     comment: PropTypes.shape({
       content: PropTypes.string.isRequired,
-      created: PropTypes.string.isRequired,
-      // User object shape
       user: PropTypes.shape({
         name: PropTypes.string.isRequired,
         avatar: PropTypes.string.isRequired,
@@ -34,16 +31,17 @@ export default class Comment extends PureComponent {
         method: 'DELETE'
       });
     } catch (error) {
-      console.error(error);
+      ToastAndroid.showWithGravity(
+        "Something went wrong. please contact support",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
   }
 
   render() {
-    // Pull comment object out of props
     const { comment } = this.props;
-    // Pull data needed to display a comment out of comment object
     const { content, created, user } = comment;
-    // Pull user name and avatar out of user object
     const { name, avatar } = user;
     return (
       <View style={styles.container}>
@@ -52,7 +50,6 @@ export default class Comment extends PureComponent {
             resizeMode='contain'
             style={styles.avatar}
             source=
-            // {require('../../assets/me.png')}
             {{ uri: avatar }}
           />}
         </View>
@@ -64,12 +61,11 @@ export default class Comment extends PureComponent {
           </Text>
           <View style={styles.commentView}>
             <Text style={[styles.text, styles.created]}>
-              {/* {moment(created).fromNow()} */}
               {this.props.comment.created_at}
             </Text>
             {this.props.loguserId == this.props.comment.user.userid && this.props.loguserId != '' ? (
               <TouchableOpacity activeOpacity={.5} onPress={() => this.deleteComment(this.props.comment.commentid)}>
-                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, color:'#878787'}} />
+                <Icon name="delete-circle" size={30} style={{ alignSelf: 'flex-end', paddingRight: 10, color: '#878787' }} />
               </TouchableOpacity>
 
             ) : (
@@ -80,7 +76,6 @@ export default class Comment extends PureComponent {
       </View>
     );
   }
-
 }
 
 const styles = StyleSheet.create({
@@ -107,7 +102,6 @@ const styles = StyleSheet.create({
 
   text: {
     color: '#000',
-    // fontFamily: 'Avenir',
     fontSize: 15,
   },
   name: {

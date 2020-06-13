@@ -146,6 +146,7 @@ export default class ActivityFeed extends React.Component {
                         } else {
                             caption = prop.description
                         }
+                        
                         const imgurl = (prop.imgurl).replace(SecuredPath, BasePath)
                         var fetchDate = prop.fetched_date;
                         var expDate = prop.expire_date;

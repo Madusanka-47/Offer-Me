@@ -20,13 +20,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api', api)
 // api(app)
-
+const port = process.env.PORT || 3000;
 module.exports = app;
 var connection = new Promise((resolve, rejected) => {
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'Connection Error:'));
   db.once('open', () => {
-    app.listen(9000, () => {
+    app.listen(port, () => {
       console.log('Node server running on port 9000');
       resolve(db)
     });

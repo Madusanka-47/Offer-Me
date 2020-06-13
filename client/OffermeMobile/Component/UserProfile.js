@@ -4,7 +4,8 @@ import {
     Text,
     View,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
 
 import QRCode from 'react-native-qrcode-svg';
@@ -13,6 +14,9 @@ import { Badge } from 'native-base'
 import GlobalConfig from '../global_config.json'
 
 const AppURI = GlobalConfig.RESTServiceURI;
+const BasePath = GlobalConfig.BasePath;
+const BannerPath = BasePath + GlobalConfig.clientAssest.profile_banner;
+const SignOutGoogle = BasePath + GlobalConfig.clientAssest.signout_google;
 
 export default class UserProfile extends React.Component {
     constructor(props) {
@@ -27,6 +31,7 @@ export default class UserProfile extends React.Component {
         await Google.signOutAsync();
         this.setState({ isSession: false });
     };
+    
     getUserProfileDetails(userId) {
         try {
             return new Promise((reslove, reject) => {
@@ -39,7 +44,11 @@ export default class UserProfile extends React.Component {
                     })
             })
         } catch (error) {
-            console.error(error);
+            ToastAndroid.showWithGravity(
+                "Something went wrong. please contact support",
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
         }
     }
 
@@ -47,7 +56,7 @@ export default class UserProfile extends React.Component {
         this.getUserProfileDetails(this.props.useParam.useParam.id).then((data) => {
             this.setState({ userData: data })
         })
-        
+
     }
 
     render() {
@@ -56,16 +65,15 @@ export default class UserProfile extends React.Component {
         const profileUrl = this.props.useParam.useParam.photoUrl
         return (
             <View>
-                {/* {this.state.signedIn ? ( */}
                 <View style={styles.header}>
-                    <Image style={styles.backImg} source={require('../assets/offermeLogo.png')} />
+                    <Image style={styles.backImg} source={{ uri: BannerPath }} />
                 </View>
 
 
                 <Image style={styles.avatar} source={{ uri: profileUrl }} />
                 <View>
                     <TouchableOpacity activeOpacity={.5} onPress={() => this.userLogout()}>
-                        <Image style={styles.signout} source={require('../assets/google-logo.png')} />
+                        <Image style={styles.signout} source={{ uri: SignOutGoogle }} />
                     </TouchableOpacity>
                 </View>
 
@@ -76,9 +84,8 @@ export default class UserProfile extends React.Component {
                             <Text style={{ fontWeight: "bold" }}> Points {this.state.userData.pointCount} </Text>
                         </Badge>
                         <Badge style={{ justifyContent: "center", alignSelf: "center", backgroundColor: '#bab8b8', marginBottom: 10 }}>
-                <Text style={{ fontWeight: "bold" }}> Posts {this.state.userData.postCount} </Text>
+                            <Text style={{ fontWeight: "bold" }}> Posts {this.state.userData.postCount} </Text>
                         </Badge>
-                        {/* {/* <Text style={styles.info}>UX Designer / Mobile developer</Text> */}
                         <QRCode
                             value='some string value'
                             backgroundColor={'white'}
@@ -95,17 +102,10 @@ export default class UserProfile extends React.Component {
         )
     }
 }
-// const AppLoginScreen = props => {
-//     return (
-
-//     )
-// }
 
 const styles = StyleSheet.create({
     header: {
         backgroundColor: "#1e54b4",
-        // resizeMode: 'cover',
-        // width: 110,
         height: 170,
     },
     avatar: {
@@ -144,8 +144,6 @@ const styles = StyleSheet.create({
         flex: 1,
         width: null,
         height: null,
-        // alignSelf: 'center',
-        // position: 'absolute',
         resizeMode: 'contain'
     }
 });
